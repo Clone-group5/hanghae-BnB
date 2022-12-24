@@ -25,9 +25,9 @@ public class Users {
     @Column(nullable = false)
     private String nickname;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Enum userRole;
+//    @Enumerated(EnumType.STRING)
+//    @Column(nullable = false)
+//    private UserRoleEnum userRole;
 
     @OneToMany(mappedBy = "users")
     private List<Room> rooms = new ArrayList<>();

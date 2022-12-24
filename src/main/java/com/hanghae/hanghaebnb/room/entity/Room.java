@@ -45,10 +45,10 @@ public class Room {
     private Integer likeCount;
 
     @ManyToOne
-    @JoinColumn
+    @JoinColumn(name = "USERS_ID")
     private Users users;
 
-    @OneToMany
+    @OneToMany(mappedBy = "room")
     private List<Comment> comments = new ArrayList<>();
 
     @OneToMany(mappedBy = "room")
