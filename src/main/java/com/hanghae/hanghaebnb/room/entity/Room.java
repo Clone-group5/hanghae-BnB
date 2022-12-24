@@ -1,0 +1,58 @@
+package com.hanghae.hanghaebnb.room.entity;
+
+import com.hanghae.hanghaebnb.book.entity.Book;
+import com.hanghae.hanghaebnb.comment.entity.Comment;
+import com.hanghae.hanghaebnb.users.entity.Users;
+import lombok.Getter;
+
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
+
+@Getter
+@Entity
+public class Room {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long roomId;
+
+    @Column(nullable = false)
+    private String title;
+
+    @Column(nullable = false)
+    private String contents;
+
+    @Column(nullable = false)
+    private Long price;
+
+    @Column
+    private Long extraPrice;
+
+    @Column(nullable = false)
+    private String img;
+
+    @Column(nullable = false)
+    private String location;
+
+    @Column(nullable = false)
+    private Integer headDefault;
+
+    @Column
+    private Integer headMax;
+
+    @Column(nullable = false)
+    private Integer likeCount;
+
+    @ManyToOne
+    @JoinColumn
+    private Users users;
+
+    @OneToMany
+    private List<Comment> comments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "room")
+    private List<Book> books = new ArrayList<>();
+
+
+}
