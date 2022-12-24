@@ -11,7 +11,7 @@ env:
   AWS_REGION: ap-northeast-2
   #(버킷 이름은 고유값 유의, 자신의 bucket값을 넣자, 나머지 아래 2개는 중복 가능)
   S3_BUCKET_NAME: my-giyhub-actions-s3-bucket # 값 넣어야함
-  CODE_DEPLOY_APPLICATION_NAME: my-codedeploy-app
+  CODE_DEPLOY_APPLICATION_NAME: hanghaeBNB
   CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: my-codedeploy-deployment-group
 
 permissions:
