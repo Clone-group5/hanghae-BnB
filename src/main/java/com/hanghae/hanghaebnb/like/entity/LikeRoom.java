@@ -8,19 +8,18 @@ import javax.persistence.*;
 
 @Getter
 @Entity
-public class like {
+public class LikeRoom {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long likeId;
 
-    private Long userId;
-
-    private Long roomId;
-
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "USERS_ID")
     private Users users;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ROOM_ID")
     private Room rooms;
+
 }

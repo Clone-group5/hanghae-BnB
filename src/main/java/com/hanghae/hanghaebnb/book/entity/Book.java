@@ -14,10 +14,6 @@ public class Book {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long bookId;
 
-    private Long userId;
-
-    private Long roomId;
-
     @Column(nullable = false)
     private String checkIn;
 
@@ -25,8 +21,10 @@ public class Book {
     private String checkOut;
 
     @ManyToOne
+    @JoinColumn(name = "ROOM_ID")
     private Room room;
 
     @ManyToOne
+    @JoinColumn(name = "USERS_ID")
     private Users users;
 }

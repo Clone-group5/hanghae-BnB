@@ -26,4 +26,8 @@ public class Comment {
     @Column(nullable = false)
     private LocalDateTime modifiedAt;
 
+    @ManyToOne
+    @JoinColumn(name = "ROOM_ID")
+    private Room room;
+
 }
