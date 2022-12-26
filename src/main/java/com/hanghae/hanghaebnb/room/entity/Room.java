@@ -54,5 +54,9 @@ public class Room {
     @OneToMany(mappedBy = "room")
     private List<Book> books = new ArrayList<>();
 
+    public void addBook(Book book){
+        this.books.add(book);
+    }
+
 
 }
