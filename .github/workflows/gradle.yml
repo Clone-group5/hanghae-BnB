@@ -35,14 +35,20 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
 
-    # 비밀 문서 설정
-#     - name: Copy Secret
-#       env:
-#         OCCUPY_SECRET: ${{ secrets.OCCUPY_SECRET }}
-#         OCCUPY_SECRET_DIR: src/main/resources
-#         OCCUPY_SECRET_DIR_FILE_NAME: application-mysql.properties
-#       run: echo $OCCUPY_SECRET | base64 --decode > $OCCUPY_SECRET_DIR/$OCCUPY_SECRET_DIR_FILE_NAME
+    - name: Copy Secret1
+      env:
+        OCCUPY_SECRET1: ${{ secrets.OCCUPY_SECRET }}
+        OCCUPY_SECRET1_DIR: src/main/resources
+        OCCUPY_SECRET1_DIR_FILE_NAME: application-db.properties
+      run: echo $OCCUPY_SECRET1 | base64 --decode > $OCCUPY_SECRET1_DIR/$OCCUPY_SECRET1_DIR_FILE_NAME
 
+      # 비밀 문서 설정2
+    - name: Copy Secret2
+      env:
+        OCCUPY_SECRET2: ${{ secrets.OCCUPY_SECRET2 }}
+        OCCUPY_SECRET2_DIR: src/main/resources
+        OCCUPY_SECRET2_DIR_FILE_NAME: application-s3.properties
+      run: echo $OCCUPY_SECRET2 | base64 --decode > $OCCUPY_SECRET2_DIR/$OCCUPY_SECRET2_DIR_FILE_NAME
 
     # 권한 설정
     - name: Grant execute permission for gradlew
