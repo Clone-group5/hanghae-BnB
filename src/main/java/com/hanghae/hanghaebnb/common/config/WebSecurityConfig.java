@@ -28,9 +28,10 @@ public class WebSecurityConfig {
         // CSRF 설정
         http.csrf().disable();
 
+        http.cors();
+
         // "/api" 경로를 타고 들어온 모든 요청에 대해 허가.
-        //http.authorizeRequests().antMatchers("/api/**").permitAll()
-        http.authorizeRequests().antMatchers("/**").permitAll()
+        http.authorizeRequests().antMatchers("/api/**").permitAll()
                 .anyRequest().authenticated();
 
         return http.build();
