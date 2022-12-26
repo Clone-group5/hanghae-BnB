@@ -69,9 +69,9 @@ public class RoomService {
         String folderPath = photoUpload(multipartFiles, room.getRoomId());
         room.imgUpdate(folderPath);
         System.out.println(tags[0]);
-//        for(Tag tag : httpServletRequest.getParameter("tags")){
-//            tagRepository.save(new Tag(tag.getRoomId(), tag.getContents()));
-//        }
+        for(int i=0;i<tags.length;i++){
+            tagRepository.save(new Tag(room.getRoomId(),tags[i]));
+        }
 
         return room.getRoomId();
     }

@@ -29,7 +29,7 @@ public class RoomController {
 
     @PostMapping("/room")
     public ResponseEntity postRoom2(HttpServletRequest httpServletRequest
-                                    ,@RequestParam(value = "tags") String[] tags
+                                    ,@RequestParam(value = "tags", required=false) String[] tags
             , @RequestParam(value ="MultipartFile", required=false) MultipartFile[] multipartFiles)
             throws Exception {
         Long roomId = roomService.postRoom(httpServletRequest, tags, multipartFiles);
