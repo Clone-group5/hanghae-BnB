@@ -27,7 +27,7 @@ public class RoomController {
 
     @PostMapping("/room")
     public ResponseEntity postRoom(HttpServletRequest httpServletRequest
-                        ,@RequestParam("MultipartFile") MultipartFile[] multipartFiles)
+            ,@RequestParam(value ="MultipartFile", required=false) MultipartFile[] multipartFiles)
             throws Exception {
         Long roomId = roomService.postRoom(httpServletRequest.getParameter("room"), multipartFiles);
         return new ResponseEntity(new ResponseDto(200, "숙소 정보 등록이 완료되었습니다.",null), HttpStatus.OK);
