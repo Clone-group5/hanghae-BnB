@@ -1,6 +1,7 @@
 package com.hanghae.hanghaebnb.room.Mapper;
 
 
+import com.hanghae.hanghaebnb.room.dto.RoomListResponseDto;
 import com.hanghae.hanghaebnb.room.dto.RoomRequestDto;
 import com.hanghae.hanghaebnb.room.dto.RoomResponseDto;
 import com.hanghae.hanghaebnb.room.entity.Room;
@@ -40,6 +41,22 @@ public class RoomMapper {
                 .like(like)
                 .imgs(imgs)
                 .tags(tags)
+                .build();
+    }
+
+    public RoomListResponseDto toRoomListResponseDto(Room room, List<String> imgs) {
+        return RoomListResponseDto.builder()
+                .roomId(room.getRoomId())
+                .hostName(room.getUsers().getNickname())
+                .title(room.getTitle())
+                .contents(room.getContents())
+                .location(room.getLocation())
+                .headDefault(room.getHeadDefault())
+                .headMax(room.getHeadMax())
+                .price((room.getPrice()))
+                .extraPrice(room.getExtraPrice())
+                .likeCount(room.getLikeCount())
+                .imgs(imgs)
                 .build();
     }
 }

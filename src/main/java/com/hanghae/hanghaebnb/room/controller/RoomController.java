@@ -2,6 +2,7 @@ package com.hanghae.hanghaebnb.room.controller;
 
 
 import com.hanghae.hanghaebnb.common.dto.ResponseDto;
+import com.hanghae.hanghaebnb.room.dto.RoomListResponseDto;
 import com.hanghae.hanghaebnb.room.dto.RoomResponseDto;
 import com.hanghae.hanghaebnb.room.service.PhotoService;
 import com.hanghae.hanghaebnb.room.service.RoomService;
@@ -33,9 +34,16 @@ public class RoomController {
     }
 
     @GetMapping("/room/{roomId}")
-    public ResponseEntity getRoom(@PathVariable Long roomId) throws IOException {
+    public ResponseEntity getRoom(@PathVariable Long roomId) {
         RoomResponseDto roomResponseDto = roomService.getRoom(roomId);
         return new ResponseEntity(new ResponseDto(200, "숙소 정보 조회가 완료되었습니다.",roomResponseDto), HttpStatus.OK);
     }
+
+    @GetMapping("/main")
+    public ResponseEntity getRooms(){
+        List<RoomListResponseDto> roomList = roomService.getRooms();
+        return new ResponseEntity(new ResponseDto(200, "조회가 완료되었습니다.", roomList), HttpStatus.OK);
+    }
+
 
 }
