@@ -1,9 +1,10 @@
 package com.hanghae.hanghaebnb.room.entity;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-
+@NoArgsConstructor
 @Getter
 @Entity
 public class Tag {
@@ -17,4 +18,9 @@ public class Tag {
 
     @Column(nullable = false)
     private Long roomId;
+
+    public Tag(Long roomId, String contents){
+        this.roomId = roomId;
+        this.contents = contents;
+    }
 }

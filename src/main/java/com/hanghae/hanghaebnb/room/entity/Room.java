@@ -3,12 +3,15 @@ package com.hanghae.hanghaebnb.room.entity;
 import com.hanghae.hanghaebnb.book.entity.Book;
 import com.hanghae.hanghaebnb.comment.entity.Comment;
 import com.hanghae.hanghaebnb.users.entity.Users;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@NoArgsConstructor
 @Getter
 @Entity
 public class Room {
@@ -54,8 +57,33 @@ public class Room {
     @OneToMany(mappedBy = "room")
     private List<Book> books = new ArrayList<>();
 
-    public void addBook(Book book){
-        this.books.add(book);
+    @Builder
+    public Room(String title
+                ,String contents
+                ,Long price
+                ,Long extraPrice
+                ,String location
+                ,Integer headDefault
+                ,Integer headMax
+                ,String img
+                ,Integer likeCount
+                ) {
+
+        this.title = title;
+        this.contents = contents;
+        this. price = price;
+        this.extraPrice = extraPrice;
+        this.location = location;
+        this.headDefault = headDefault;
+        this.headMax = headMax;
+        this.likeCount = likeCount;
+        this.img = img;
+
+    }
+
+
+    public void imgUpdate(String img){
+        this.img = img;
     }
 
 
