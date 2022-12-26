@@ -47,7 +47,7 @@ public class RoomService {
     //room 올리기
     @Transactional
     public Long postRoom(String jsonRoom,MultipartFile[] multipartFiles) throws JsonProcessingException,IOException {
-        Users user = new Users(1L, "sfe@naver.com", "sf", "fase");
+        //Users user = new Users(1L, "sfe@naver.com", "sf", "fase");
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.readTree(jsonRoom);
         Room room = new Room(
