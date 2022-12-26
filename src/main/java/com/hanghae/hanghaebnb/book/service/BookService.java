@@ -33,7 +33,11 @@ public class BookService {
         );
 
         //totalprice 계산
-        Long total = 1234L;     //추가예정
+        Long total = room.getPrice();
+
+        if(requestBook.getHeadCount() > room.getHeadDefault()){
+            total += room.getExtraPrice();
+        }
 
         Book book = bookMapper.toBook(room, requestBook, total);
         room.addBook(book);
