@@ -35,10 +35,9 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-
       - name: Copy Secret1
         env:
-          OCCUPY_SECRET1: ${{ secrets.OCCUPY_SECRET }}
+          OCCUPY_SECRET1: ${{ secrets.OCCUPY_SECRET1 }}
           OCCUPY_SECRET1_DIR: src/main/resources
           OCCUPY_SECRET1_DIR_FILE_NAME: application-db.properties
         run: echo $OCCUPY_SECRET1 | base64 --decode > $OCCUPY_SECRET1_DIR/$OCCUPY_SECRET1_DIR_FILE_NAME
