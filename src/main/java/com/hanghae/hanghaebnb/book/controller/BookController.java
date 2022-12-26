@@ -1,6 +1,7 @@
 package com.hanghae.hanghaebnb.book.controller;
 
 import com.hanghae.hanghaebnb.book.dto.RequestBook;
+import com.hanghae.hanghaebnb.book.dto.ResponseBookList;
 import com.hanghae.hanghaebnb.book.service.BookService;
 import com.hanghae.hanghaebnb.common.dto.ResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +16,17 @@ public class BookController {
     private final BookService bookService;
 
     /*
-     * 숙소 예약 등록
+     * 예약 조회
+     */
+    @GetMapping()
+    public ResponseEntity<ResponseDto> showBook(){
+        ResponseBookList responseBookList = bookService.showBook();
+        ResponseDto responseDto = new ResponseDto(200, "예약 정보 조회가 완료되었습니다.", responseBookList);
+        return new ResponseEntity<>(responseDto, HttpStatus.OK);
+    }
+
+    /*
+     * 예약 등록
      */
     @PostMapping("/{roomId}")
     public ResponseEntity<ResponseDto> addBook(@PathVariable Long roomId, @RequestBody RequestBook requestBook){
@@ -25,7 +36,7 @@ public class BookController {
     }
 
     /*
-     * 숙소 예약 취소
+     * 예약 취소
      */
     @DeleteMapping("/{bookId}")
     public ResponseEntity<ResponseDto> deleteBook(@PathVariable Long bookId){
