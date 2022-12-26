@@ -20,7 +20,9 @@ public class BookService {
     private final RoomRepository roomRepository;
     private final BookMapper bookMapper;
 
-    //예약 등록
+    /*
+     * 숙소 예약 등록
+     */
     @Transactional
     public void addBook(Long roomId, RequestBook requestBook) {
         //유저 확인 추가 예정
@@ -37,4 +39,19 @@ public class BookService {
         room.addBook(book);
         bookRepository.save(book);
     }
+
+    /*
+     * 숙소 예약 취소
+     */
+    public void deleteBook(Long bookId) {
+        //예약 확인
+        Book book = bookRepository.findById(bookId).orElseThrow(
+                () -> new IllegalArgumentException(NOT_FOUND_ROOM_EXCEPTION.getMsg())
+        );
+        //유저 확인 추가 예정
+
+        //예약 취소
+        bookRepository.deleteById(bookId);
+    }
+
 }
