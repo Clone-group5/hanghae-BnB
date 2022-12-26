@@ -1,6 +1,6 @@
 package com.hanghae.hanghaebnb.users.entity;
 
-public enum UserRoleEnum {
+public enum UsersRoleEnum {
     USER,
     HOST
 }
