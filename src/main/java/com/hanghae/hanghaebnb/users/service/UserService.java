@@ -2,6 +2,7 @@ package com.hanghae.hanghaebnb.users.service;
 
 import com.hanghae.hanghaebnb.common.exception.CustomException;
 import com.hanghae.hanghaebnb.common.exception.ErrorCode;
+import com.hanghae.hanghaebnb.common.jwt.JwtUtil;
 import com.hanghae.hanghaebnb.users.dto.RequestCreateUser;
 import com.hanghae.hanghaebnb.users.dto.RequestLoginUser;
 import com.hanghae.hanghaebnb.users.entity.UsersRoleEnum;
@@ -13,6 +14,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletResponse;
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -20,6 +23,7 @@ public class UserService {
     private final UsersMapper usersMapper;
     private final UserValidator userValidator;
     private final PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
 
     @Transactional
     public void signup(RequestCreateUser requestCreateUser) {
@@ -63,7 +67,7 @@ public class UserService {
     }
 
     @Transactional
-    public void login(RequestLoginUser requestLoginUser) {
+    public void login(RequestLoginUser requestLoginUser, HttpServletResponse response) {
         String email = requestLoginUser.getEmail();
         String password = requestLoginUser.getPassword();
 
@@ -74,5 +78,7 @@ public class UserService {
         if(!passwordEncoder.matches(password, users.getPassword())) {
             throw new CustomException(ErrorCode.NOT_FOUND_MATCH_USER_INFO);
         }
+
+        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(users.getEmail(), users.getUserRole()));
     }
 }
