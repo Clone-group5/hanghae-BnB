@@ -60,7 +60,7 @@ public class RoomService {
                 ,jsonNode.get("headMax").asInt()
                 ,""
                 ,0
-                ,user
+                //,user
         );
 
         roomRepository.save(room);

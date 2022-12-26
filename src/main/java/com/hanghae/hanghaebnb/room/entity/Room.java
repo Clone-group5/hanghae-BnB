@@ -67,7 +67,7 @@ public class Room {
                 ,Integer headMax
                 ,String img
                 ,Integer likeCount
-                ,Users users
+                //,Users users
                 ) {
 
         this.title = title;
