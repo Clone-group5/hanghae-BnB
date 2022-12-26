@@ -7,10 +7,7 @@ import lombok.Getter;
 @Getter
 public enum ErrorCode {
 
-    //users
     NOT_FOUND_USERS_EXCEPTION(404, "존재하지 않는 사용자입니다."),
-
-    //book
     NOT_FOUND_ROOM_EXCEPTION(404, "존재하지 않는 숙소입니다."),
     INVALID_EMAIL(400, "이메일 형식이 맞지 않습니다."),
     DUPLICATE_EMAIL(400, "중복된 이메일입니다."),
