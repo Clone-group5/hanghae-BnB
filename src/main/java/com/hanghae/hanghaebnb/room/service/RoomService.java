@@ -12,6 +12,7 @@ import com.hanghae.hanghaebnb.common.exception.CustomException;
 import com.hanghae.hanghaebnb.common.exception.ErrorCode;
 import com.hanghae.hanghaebnb.room.Mapper.RoomMapper;
 import com.hanghae.hanghaebnb.room.Mapper.TagMapper;
+import com.hanghae.hanghaebnb.room.dto.RoomListResponseDto;
 import com.hanghae.hanghaebnb.room.dto.RoomResponseDto;
 import com.hanghae.hanghaebnb.room.entity.Room;
 import com.hanghae.hanghaebnb.room.entity.Tag;
@@ -41,13 +42,11 @@ public class RoomService {
     private String bucket = "hanghae-bnb";//버켓 이름
     private final AmazonS3Client amazonS3Client;
     private final RoomRepository roomRepository;
-
-    //private final UserRepository userRepository;
     private final TagRepository tagRepository;
     //room 올리기
     @Transactional
     public Long postRoom(String jsonRoom,MultipartFile[] multipartFiles) throws JsonProcessingException,IOException {
-        //Users user = new Users(1L, "sfe@naver.com", "sf", "fase");
+
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.readTree(jsonRoom);
         Room room = new Room(
@@ -93,13 +92,25 @@ public class RoomService {
         return roomResponseDto;
     }
 
+    public List<RoomListResponseDto> getRooms() {
+        List<Room> roomList = roomRepository.findAll();
+        List<RoomListResponseDto> roomResponseList= new ArrayList<>();
+        RoomMapper roomMapper = new RoomMapper();
+
+        for (Room room:roomList) {
+            List<String> imgs = getPhotoName(room.getRoomId());
+            roomResponseList.add(roomMapper.toRoomListResponseDto(room,imgs));
+        }
+        return roomResponseList;
+
+    }
+
     //아마존 S3 사진 업로드
     public String photoUpload(MultipartFile[] multipartFiles, Long roomId) throws IOException {
         //List<String> imagePathList = new ArrayList<>();
         String folderPath = "";
         for(MultipartFile file : multipartFiles){
             String originalName = roomId + "/" + file.getOriginalFilename();
-            System.out.println("originalName >>>>> " +originalName);
             long size = file.getSize();
 
             ObjectMetadata objectMetadata = new ObjectMetadata();
@@ -111,31 +122,26 @@ public class RoomService {
                             .withCannedAcl(CannedAccessControlList.PublicRead)
             );
 
-            //String imagePath = amazonS3Client.getUrl(bucket, originalName).toString();
             folderPath = amazonS3Client.getUrl(bucket, roomId.toString()).toString();
-            System.out.println("image path :::::::: 파일업로드 :::::::::: " + folderPath);
-            //imagePathList.add(imagePath);
-
         }
         return folderPath;
     }
 
     public List<String> getPhotoName(Long roomId){
 
-        String folderPath = "";
         ListObjectsRequest listObjectsRequest = new ListObjectsRequest()
                                                         .withBucketName(bucket)
                                                         .withPrefix(roomId+"/");
         ObjectListing objectListing  = amazonS3Client.listObjects(listObjectsRequest);
         List<String> photos = new ArrayList<>();
-        HttpHeaders httpHeaders = new HttpHeaders();
 
         for (S3ObjectSummary summary:objectListing.getObjectSummaries()) {
-            System.out.println(summary.getKey());
-            photos.add(summary.getKey());
+            photos.add(amazonS3Client.getUrl(bucket, summary.getKey()).toString());
        }
 
        return photos;
 
     }
+
+
 }
