@@ -18,6 +18,7 @@ import javax.transaction.Transactional;
 import java.util.List;
 
 import static com.hanghae.hanghaebnb.common.exception.ErrorCode.NOT_FOUND_ROOM_EXCEPTION;
+import static com.hanghae.hanghaebnb.common.exception.ErrorCode.NOT_FOUND_USERS_EXCEPTION;
 
 @RequiredArgsConstructor
 @Service
@@ -49,18 +50,21 @@ public class BookService {
      */
     @Transactional
     public void addBook(Long roomId, RequestBook requestBook) {
-        /* 임시로 넣어둔 것 시큐리티 구현 후 수정 */
-        Users users = usersRepository.findById(Long.valueOf(1)).orElseThrow(
-                () -> new IllegalArgumentException("없는 유저입니다.")
-        );
 
+        Users users = usersRepository.findById(1L).orElseThrow(
+                () -> new IllegalArgumentException(NOT_FOUND_USERS_EXCEPTION.getMsg())
+        );
         //room확인
         Room room = roomRepository.findById(roomId).orElseThrow(
                 () -> new IllegalArgumentException(NOT_FOUND_ROOM_EXCEPTION.getMsg())
         );
 
         //totalprice 계산
-        Long total = 1234L;     //추가예정
+        Long total = room.getPrice();
+
+        if(requestBook.getHeadCount() > room.getHeadDefault()){
+            total += room.getExtraPrice();
+        }
 
         Book book = bookMapper.toBook(room, requestBook, total, users);
         room.addBook(book);
