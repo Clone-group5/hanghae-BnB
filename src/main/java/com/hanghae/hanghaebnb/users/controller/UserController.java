@@ -3,7 +3,6 @@ package com.hanghae.hanghaebnb.users.controller;
 import com.hanghae.hanghaebnb.common.dto.ResponseDto;
 import com.hanghae.hanghaebnb.users.dto.RequestCreateUser;
 import com.hanghae.hanghaebnb.users.dto.RequestLoginUser;
-import com.hanghae.hanghaebnb.users.exception.UserException;
 import com.hanghae.hanghaebnb.users.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -34,12 +33,7 @@ public class UserController {
 
     @PostMapping("/users/login")
     public ResponseEntity<ResponseDto> login(@RequestBody RequestLoginUser requestLoginUser) {
-        try {
-            userService.login(requestLoginUser);
-        } catch (UserException e) {
-            return new ResponseEntity<>(new ResponseDto(e.getErrorCode().getStatusCode(), e.getErrorCode().getMsg(), null), HttpStatus.OK );
-        }
-
+        userService.login(requestLoginUser);
         return new ResponseEntity<>(new ResponseDto<>(200, "로그인이 완료되었습니다.", null), HttpStatus.OK);
     }
 }
