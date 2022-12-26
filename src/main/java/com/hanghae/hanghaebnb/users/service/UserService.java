@@ -7,7 +7,6 @@ import com.hanghae.hanghaebnb.users.dto.RequestCreateUser;
 import com.hanghae.hanghaebnb.users.dto.RequestLoginUser;
 import com.hanghae.hanghaebnb.users.entity.UserRoleEnum;
 import com.hanghae.hanghaebnb.users.entity.Users;
-import com.hanghae.hanghaebnb.users.exception.UserException;
 import com.hanghae.hanghaebnb.users.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -65,7 +64,7 @@ public class UserService {
         String password = requestLoginUser.getPassword();
 
         Users users = userRepository.findByEmail(email).orElseThrow(
-                UserException::new
+                () -> new CustomException(ErrorCode.NOT_FOUND_MATCH_USER_INFO)
         );
 
         if(!users.getPassword().equals(password)) {
