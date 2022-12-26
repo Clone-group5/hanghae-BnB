@@ -81,6 +81,10 @@ public class Room {
 
     }
 
+    public void addBook(Book book){
+        this.books.add(book);
+    }
+
 
     public void imgUpdate(String img){
         this.img = img;
