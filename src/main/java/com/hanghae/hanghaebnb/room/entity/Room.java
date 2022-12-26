@@ -79,7 +79,7 @@ public class Room {
         this.headMax = headMax;
         this.likeCount = likeCount;
         this.img = img;
-        this.users = users;
+        //this.users = users;
 
     }
 
