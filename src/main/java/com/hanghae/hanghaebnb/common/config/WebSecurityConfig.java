@@ -22,11 +22,13 @@ public class WebSecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         // CSRF 설정
         http.csrf().disable();
+
+        // CORS 설정
+        http.cors();
 
         // "/api" 경로를 타고 들어온 모든 요청에 대해 허가.
         http.authorizeRequests()
