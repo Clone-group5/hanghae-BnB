@@ -14,10 +14,23 @@ import org.springframework.web.bind.annotation.*;
 public class BookController {
     private final BookService bookService;
 
+    /*
+     * 숙소 예약 등록
+     */
     @PostMapping("/{roomId}")
     public ResponseEntity<ResponseDto> addBook(@PathVariable Long roomId, @RequestBody RequestBook requestBook){
         bookService.addBook(roomId, requestBook);
         ResponseDto responseDto = new ResponseDto(200, "예약이 완료되었습니다.", null);
+        return new ResponseEntity<>(responseDto, HttpStatus.OK);
+    }
+
+    /*
+     * 숙소 예약 취소
+     */
+    @DeleteMapping("/{bookId}")
+    public ResponseEntity<ResponseDto> deleteBook(@PathVariable Long bookId){
+        bookService.deleteBook(bookId);
+        ResponseDto responseDto = new ResponseDto(200, "숙소 예약 취소가 완료되었습니다.", null);
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 }
