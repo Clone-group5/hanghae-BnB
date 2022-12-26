@@ -34,6 +34,7 @@ public class UserController {
     }
 
     @PostMapping("/users/login")
+
     public ResponseEntity<ResponseDto> login(@RequestBody RequestLoginUser requestLoginUser, HttpServletResponse response) {
         userService.login(requestLoginUser, response);
         return new ResponseEntity<>(new ResponseDto<>(200, "로그인이 완료되었습니다.", null), HttpStatus.OK);

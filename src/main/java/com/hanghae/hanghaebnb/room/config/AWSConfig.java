@@ -4,15 +4,18 @@ import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class AWSConfig {
-
-    private String iamAccess = "AKIATGQYMSJHIOHRHSC6";
-    private String iamSecretKey = "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";
-    private String region = "ap-northeast-2";
+    @Value("${amazon.s3.iamAccess}")
+    private String iamAccess;
+    @Value("${amazon.s3.iamSecretKey}")
+    private String iamSecretKey;
+    @Value("${amazon.s3.region}")
+    private String region;
 
     @Bean
     public AmazonS3Client amazonS3Client(){
