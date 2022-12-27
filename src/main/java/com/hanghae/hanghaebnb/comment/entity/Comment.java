@@ -1,13 +1,16 @@
 package com.hanghae.hanghaebnb.comment.entity;
 
 import com.hanghae.hanghaebnb.room.entity.Room;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Getter
 @Entity
+@NoArgsConstructor
 public class Comment {
 
     @Id
@@ -30,4 +33,12 @@ public class Comment {
     @JoinColumn(name = "ROOM_ID")
     private Room room;
 
+    @Builder
+    public Comment(String writer, String contents, LocalDateTime createdAt, LocalDateTime modifiedAt, Room room){
+        this.writer = writer;
+        this.contents = contents;
+        this.createdAt = createdAt;
+        this.modifiedAt = modifiedAt;
+        this.room = room;
+    }
 }

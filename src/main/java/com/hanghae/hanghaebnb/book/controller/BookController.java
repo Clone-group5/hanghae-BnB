@@ -11,14 +11,14 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/book")
+@RequestMapping("/api")
 public class BookController {
     private final BookService bookService;
 
     /*
      * 예약 조회
      */
-    @GetMapping()
+    @GetMapping("/book")
     public ResponseEntity<ResponseDto> showBook(){
         ResponseBookList responseBookList = bookService.showBook();
         ResponseDto responseDto = new ResponseDto(200, "예약 정보 조회가 완료되었습니다.", responseBookList);
@@ -28,7 +28,7 @@ public class BookController {
     /*
      * 예약 등록
      */
-    @PostMapping("/{roomId}")
+    @PostMapping("/room/{roomId}/book")
     public ResponseEntity<ResponseDto> addBook(@PathVariable Long roomId, @RequestBody RequestBook requestBook){
         bookService.addBook(roomId, requestBook);
         ResponseDto responseDto = new ResponseDto(200, "예약이 완료되었습니다.", null);
@@ -38,7 +38,7 @@ public class BookController {
     /*
      * 예약 취소
      */
-    @DeleteMapping("/{bookId}")
+    @DeleteMapping("/book/{bookId}")
     public ResponseEntity<ResponseDto> deleteBook(@PathVariable Long bookId){
         bookService.deleteBook(bookId);
         ResponseDto responseDto = new ResponseDto(200, "숙소 예약 취소가 완료되었습니다.", null);
