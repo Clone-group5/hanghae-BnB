@@ -24,15 +24,18 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String token = jwtUtil.resolveToken(request);
+        String uri = request.getRequestURI();
+        String method = request.getMethod();
 
         if (token != null) {
             if (!jwtUtil.validateToken(token)) {
-                jwtExceptionHandler(response, "Token Error", HttpStatus.UNAUTHORIZED.value());
+                jwtExceptionHandler(response, "로그인 상태를 확인해주세요.", HttpStatus.UNAUTHORIZED.value());
                 return;
             }
             Claims claims = jwtUtil.getUserInfoFromToken(token);
             setAuthentication(claims.getSubject());
         }
+
         filterChain.doFilter(request, response);
     }
 
