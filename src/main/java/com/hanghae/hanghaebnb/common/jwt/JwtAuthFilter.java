@@ -27,21 +27,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String uri = request.getRequestURI();
         String method = request.getMethod();
 
-        /*
-        토큰이 없을 경우 다음 해당 필더를 그대로 스킵.
-        WebSecurityConfig 단에서 제대로 인증/인가 처리를 해주겠다는 의미
-         */
-        if (token == null) {
-            filterChain.doFilter(request, response);
-            return;
+        if (token != null) {
+            if (!jwtUtil.validateToken(token)) {
+                jwtExceptionHandler(response, "로그인 상태를 확인해주세요.", HttpStatus.UNAUTHORIZED.value());
+                return;
+            }
+            Claims claims = jwtUtil.getUserInfoFromToken(token);
+            setAuthentication(claims.getSubject());
         }
-
-        if (!jwtUtil.validateToken(token)) {
-            jwtExceptionHandler(response, "Token Error", HttpStatus.UNAUTHORIZED.value());
-            return;
-        }
-        Claims claims = jwtUtil.getUserInfoFromToken(token);
-        setAuthentication(claims.getSubject());
 
         filterChain.doFilter(request, response);
     }
