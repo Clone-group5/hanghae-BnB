@@ -5,6 +5,7 @@ import com.hanghae.hanghaebnb.common.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -38,12 +39,14 @@ public class WebSecurityConfig {
         // session 비활성화 설정, 세션정책 STATELESS
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-        // "/api" 경로를 타고 들어온 모든 요청에 대해 허가.
+        // 아래 경로를 타고 들어온 모든 요청에 대해 허가.
         http.authorizeRequests()
-                .antMatchers("/api/users/**").permitAll();
+                .antMatchers("/api/users/**").permitAll()
+                .antMatchers(HttpMethod.GET).permitAll();
 
-        // 어떤 요청이든 인증 과정을 거쳐야 한다.
+        // 인증 과정을 거쳐야 한다.
         http.authorizeRequests()
+                .antMatchers(HttpMethod.GET, "/api/book").authenticated()
                 .anyRequest().authenticated();
 
         // JwtAuthFilter 등록
