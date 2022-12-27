@@ -4,8 +4,8 @@ import com.hanghae.hanghaebnb.likeRoom.entity.LikeRoom;
 import com.hanghae.hanghaebnb.likeRoom.repository.LikeRoomRepository;
 import com.hanghae.hanghaebnb.room.entity.Room;
 import com.hanghae.hanghaebnb.room.repository.RoomRepository;
-import com.hanghae.hanghaebnb.users.UserRepository;
 import com.hanghae.hanghaebnb.users.entity.Users;
+import com.hanghae.hanghaebnb.users.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
