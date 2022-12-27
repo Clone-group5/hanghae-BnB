@@ -43,6 +43,7 @@ public class WebSecurityConfig {
         // 아래 경로를 타고 들어온 모든 요청에 대해 접근 허가.
         http.authorizeRequests()
                 .antMatchers("/api/users/**").permitAll()
+                .antMatchers("/api/main/**").permitAll()
                 .antMatchers(HttpMethod.GET).permitAll();
 
         // 인증 과정을 거쳐야 한다.
