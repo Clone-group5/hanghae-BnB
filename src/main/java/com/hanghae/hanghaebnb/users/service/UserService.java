@@ -5,6 +5,7 @@ import com.hanghae.hanghaebnb.common.exception.ErrorCode;
 import com.hanghae.hanghaebnb.common.jwt.JwtUtil;
 import com.hanghae.hanghaebnb.users.dto.RequestCreateUser;
 import com.hanghae.hanghaebnb.users.dto.RequestLoginUser;
+import com.hanghae.hanghaebnb.users.dto.ResponseLoginUser;
 import com.hanghae.hanghaebnb.users.entity.UsersRoleEnum;
 import com.hanghae.hanghaebnb.users.entity.Users;
 import com.hanghae.hanghaebnb.users.mapper.UsersMapper;
@@ -67,7 +68,7 @@ public class UserService {
     }
 
     @Transactional
-    public void login(RequestLoginUser requestLoginUser, HttpServletResponse response) {
+    public ResponseLoginUser login(RequestLoginUser requestLoginUser, HttpServletResponse response) {
         String email = requestLoginUser.getEmail();
         String password = requestLoginUser.getPassword();
 
@@ -80,5 +81,7 @@ public class UserService {
         }
 
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(users.getEmail(), users.getUserRole()));
+
+        return new ResponseLoginUser(users.getEmail(), users.getNickname());
     }
 }
