@@ -28,6 +28,7 @@ public class WebSecurityConfig {
         // BCrypt 형식의 암호화 방식, 적응형 단방향 암호화
         return new BCryptPasswordEncoder();
     }
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         // CSRF 비활성화 설정

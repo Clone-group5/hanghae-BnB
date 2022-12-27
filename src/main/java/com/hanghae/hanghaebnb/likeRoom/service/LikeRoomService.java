@@ -24,10 +24,11 @@ public class LikeRoomService {
     private final LikeRoomRepository likeRoomRepository;
 
     @Transactional
-    public boolean likeRoom(Long roomId) {
+    public boolean likeRoom(Long roomId, Users usersReceive) {
         boolean likeBoolean = false;
+        System.out.println("usersReceive.getUserId() = " + usersReceive.getUserId());
 
-        Users users = userRepository.findById(1L).orElseThrow(
+        Users users = userRepository.findById(usersReceive.getUserId()).orElseThrow(
                 () -> new IllegalArgumentException(NOT_FOUND_USERS_EXCEPTION.getMsg())
         );
 
