@@ -4,8 +4,8 @@ import com.hanghae.hanghaebnb.likeRoom.entity.LikeRoom;
 import com.hanghae.hanghaebnb.likeRoom.repository.LikeRoomRepository;
 import com.hanghae.hanghaebnb.room.entity.Room;
 import com.hanghae.hanghaebnb.room.repository.RoomRepository;
-import com.hanghae.hanghaebnb.users.UserRepository;
 import com.hanghae.hanghaebnb.users.entity.Users;
+import com.hanghae.hanghaebnb.users.repository.UsersRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +19,7 @@ import static com.hanghae.hanghaebnb.common.exception.ErrorCode.NOT_FOUND_USERS_
 @RequiredArgsConstructor
 @Service
 public class LikeRoomService {
-    private final UserRepository userRepository;
+    private final UsersRepository usersRepository;
     private final RoomRepository roomRepository;
     private final LikeRoomRepository likeRoomRepository;
 
@@ -27,7 +27,7 @@ public class LikeRoomService {
     public boolean likeRoom(Long roomId) {
         boolean likeBoolean = false;
 
-        Users users = userRepository.findById(1L).orElseThrow(
+        Users users = usersRepository.findById(1L).orElseThrow(
                 () -> new IllegalArgumentException(NOT_FOUND_USERS_EXCEPTION.getMsg())
         );
 
