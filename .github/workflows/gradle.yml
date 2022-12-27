@@ -35,7 +35,7 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      # 비밀 문서 설정2
+      # 비밀 문서 설정1
       - name: Copy Secret1
         env:
           OCCUPY_SECRET1: ${{ secrets.OCCUPY_SECRET1 }}
