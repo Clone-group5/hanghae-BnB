@@ -72,7 +72,6 @@ public class RoomService {
         for(int i=0;i<tags.length;i++){
             tagRepository.save(new Tag(room.getRoomId(),tags[i]));
         }
-
         return room.getRoomId();
     }
 

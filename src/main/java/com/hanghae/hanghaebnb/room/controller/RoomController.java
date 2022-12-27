@@ -3,7 +3,10 @@ package com.hanghae.hanghaebnb.room.controller;
 
 import com.hanghae.hanghaebnb.common.dto.ResponseDto;
 import com.hanghae.hanghaebnb.room.dto.RoomListResponseDto;
+import com.hanghae.hanghaebnb.room.dto.RoomRequestDto;
 import com.hanghae.hanghaebnb.room.dto.RoomResponseDto;
+import com.hanghae.hanghaebnb.room.entity.Tag;
+import com.hanghae.hanghaebnb.room.service.PhotoService;
 import com.hanghae.hanghaebnb.room.service.RoomService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

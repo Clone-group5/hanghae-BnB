@@ -3,6 +3,7 @@ package com.hanghae.hanghaebnb.users.controller;
 import com.hanghae.hanghaebnb.common.dto.ResponseDto;
 import com.hanghae.hanghaebnb.users.dto.RequestCreateUser;
 import com.hanghae.hanghaebnb.users.dto.RequestLoginUser;
+import com.hanghae.hanghaebnb.users.dto.ResponseLoginUser;
 import com.hanghae.hanghaebnb.users.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -11,6 +12,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping("/api")
@@ -32,8 +35,8 @@ public class UserController {
     }
 
     @PostMapping("/users/login")
-    public ResponseEntity<ResponseDto> login(@RequestBody RequestLoginUser requestLoginUser) {
-        userService.login(requestLoginUser);
-        return new ResponseEntity<>(new ResponseDto<>(200, "로그인이 완료되었습니다.", null), HttpStatus.OK);
+    public ResponseEntity<ResponseDto> login(@RequestBody RequestLoginUser requestLoginUser, HttpServletResponse response) {
+        ResponseLoginUser responseLoginUser = userService.login(requestLoginUser, response);
+        return new ResponseEntity<>(new ResponseDto<>(200, "로그인이 완료되었습니다.", responseLoginUser), HttpStatus.OK);
     }
 }
