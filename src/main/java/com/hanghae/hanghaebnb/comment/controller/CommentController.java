@@ -21,7 +21,6 @@ public class CommentController {
                                      @RequestBody RequestComment requestComment){
 
         commentService.createComment(roomid,requestComment, userDetails.getUsers());
-
         return new ResponseDto(200,"후기 등록이 완료되었습니다.",null);
 
     }
