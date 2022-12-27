@@ -67,7 +67,7 @@ public class Room {
                 ,Integer headMax
                 ,String img
                 ,Integer likeCount
-                //,Users users
+                ,Users users
                 ) {
 
         this.title = title;
@@ -79,7 +79,7 @@ public class Room {
         this.headMax = headMax;
         this.likeCount = likeCount;
         this.img = img;
-        //this.users = users;
+        this.users = users;
 
     }
 

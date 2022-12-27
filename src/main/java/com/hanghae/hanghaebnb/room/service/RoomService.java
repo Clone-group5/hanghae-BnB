@@ -48,7 +48,7 @@ public class RoomService {
     private final TagRepository tagRepository;
 
     @Transactional
-    public Long postRoom(HttpServletRequest httpServletRequest, String[] tags, MultipartFile[] multipartFiles) throws JsonProcessingException,IOException {
+    public Long postRoom(HttpServletRequest httpServletRequest, String[] tags, MultipartFile[] multipartFiles, Users users) throws JsonProcessingException,IOException {
 
         Room room = new Room(
                 httpServletRequest.getParameter("title")
@@ -60,7 +60,7 @@ public class RoomService {
                 , Integer.parseInt(httpServletRequest.getParameter("headMax"))
                 ,""
                 ,0
-                //,user
+                ,users
         );
 
         roomRepository.save(room);
@@ -68,7 +68,6 @@ public class RoomService {
         room.imgUpdate(folderPath);
 
         for(String tag : tags){
-            System.out.println(tag);
             tagRepository.save(new Tag(room.getRoomId(), tag));
         }
 
@@ -102,7 +101,6 @@ public class RoomService {
             roomResponseList.add(roomMapper.toRoomListResponseDto(room,imgs));
         }
         return roomResponseList;
-
     }
 
     @Transactional(readOnly = true)
@@ -115,6 +113,7 @@ public class RoomService {
             List<String> imgs = getPhotoName(room.getRoomId());
             roomResponseList.add(roomMapper.toRoomListResponseDto(room,imgs));
         }
+
         return roomResponseList;
     }
 
