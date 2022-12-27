@@ -92,5 +92,13 @@ public class Room {
         this.img = img;
     }
 
+    public void like(){
+        this.likeCount++;
+    }
+
+    public void unLike(){
+        this.likeCount--;
+    }
+
 
 }
