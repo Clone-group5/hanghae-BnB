@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -35,18 +36,19 @@ public class RoomController {
 
     @GetMapping("/room/{roomId}")
     public ResponseEntity getRoom(@PathVariable Long roomId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        RoomResponseDto roomResponseDto = roomService.getRoom(roomId);
+        RoomResponseDto roomResponseDto = roomService.getRoom(roomId, userDetails.getUsers());
         return new ResponseEntity(new ResponseDto(200, "숙소 정보 조회가 완료되었습니다.",roomResponseDto), HttpStatus.OK);
     }
 
     @GetMapping("/main")
-    public ResponseEntity getRooms(@RequestParam(value = "category", required = false) String category){
+    public ResponseEntity getRooms(@RequestBody(required = false) Map<String, String> category){
+
         List<RoomListResponseDto> roomList;
 
-        if(category == null || category.equals("전체")){
+        if(category == null || category.get("category").equals("전체")){
             roomList = roomService.getRooms();
         }else{
-            roomList = roomService.getRoomsByCategory(category);
+            roomList = roomService.getRoomsByCategory(category.get("category"));
         }
 
         return new ResponseEntity(new ResponseDto(200, "조회가 완료되었습니다.", roomList), HttpStatus.OK);
@@ -54,8 +56,8 @@ public class RoomController {
 
 
     @DeleteMapping("/room/{roomId}")
-    public ResponseEntity deleteRoom(@PathVariable Long roomId){
-        roomService.deleteRoom(roomId);
+    public ResponseEntity deleteRoom(@PathVariable Long roomId, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        roomService.deleteRoom(roomId, userDetails.getUsers());
         return new ResponseEntity(new ResponseDto(200, "삭제가 완료되었습니다.", null), HttpStatus.OK);
     }
 }
