@@ -48,7 +48,7 @@ public class RoomService {
     private final AmazonS3Client amazonS3Client;
     private final RoomRepository roomRepository;
     private final TagRepository tagRepository;
-
+    private final CommentRepository commentRepository;
 
     @Transactional
     public Long postRoom(HttpServletRequest httpServletRequest, String[] tags, MultipartFile[] multipartFiles, Users users) throws JsonProcessingException,IOException {
@@ -79,7 +79,7 @@ public class RoomService {
     }
 
     @Transactional(readOnly = true)
-    public RoomResponseDto getRoom(Long roomId) {
+    public RoomResponseDto getRoom(Long roomId, Users users) {
         List<String> tagList = new ArrayList<>();
         Room room = roomRepository.findById(roomId).orElseThrow(
                 ()->new CustomException(ErrorCode.NOT_FOUND_ROOM_EXCEPTION)
@@ -90,8 +90,10 @@ public class RoomService {
         }
         List<String> imgs = getPhotoName(roomId);
         //List<Comment> comments= commentRepository.findAllByRoomId(room.getRoomId());
+
+
         RoomMapper roomMapper = new RoomMapper();
-        RoomResponseDto roomResponseDto = roomMapper.toRoomResponseDto(room,  imgs,tagList, true/*추후 보완*/);
+        RoomResponseDto roomResponseDto = roomMapper.toRoomResponseDto(room,  imgs, tagList, true/*추후 보완*/);
         return roomResponseDto;
     }
 
@@ -126,13 +128,16 @@ public class RoomService {
     }
 
     @Transactional
-    public void deleteRoom(Long roomId) {
+    public void deleteRoom(Long roomId, Users users) {
 
         photoDelete(roomId);
 
-        roomRepository.findById(roomId).orElseThrow(
+        Room room = roomRepository.findById(roomId).orElseThrow(
                 ()->new CustomException(ErrorCode.NOT_FOUND_ROOM_EXCEPTION)
         );
+        if(room.getUsers().getUserId() != users.getUserId()){
+            throw new CustomException(ErrorCode.AUTHORIZATION_FAIL);
+        }
 
         roomRepository.deleteById(roomId);
     }
