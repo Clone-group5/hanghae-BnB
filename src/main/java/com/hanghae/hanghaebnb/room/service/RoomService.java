@@ -79,7 +79,7 @@ public class RoomService {
     }
 
     @Transactional(readOnly = true)
-    public RoomResponseDto getRoom(Long roomId, Users users) {
+    public RoomResponseDto getRoom(Long roomId, Long userId) {
         List<String> tagList = new ArrayList<>();
         Room room = roomRepository.findById(roomId).orElseThrow(
                 ()->new CustomException(ErrorCode.NOT_FOUND_ROOM_EXCEPTION)
