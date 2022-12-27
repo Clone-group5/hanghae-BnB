@@ -40,7 +40,7 @@ public class RoomController {
         return new ResponseEntity(new ResponseDto(200, "숙소 정보 조회가 완료되었습니다.",roomResponseDto), HttpStatus.OK);
     }
 
-    @GetMapping("/main")
+    @PostMapping("/main")
     public ResponseEntity getRooms(@RequestBody(required = false) Map<String, String> category){
 
         List<RoomListResponseDto> roomList;
