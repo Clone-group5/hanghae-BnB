@@ -34,8 +34,8 @@ public class Comment {
     private Room room;
 
     @Builder
-    public Comment(String witer, String contents, LocalDateTime createdAt, LocalDateTime modifiedAt, Room room){
-        this.writer = witer;
+    public Comment(String writer, String contents, LocalDateTime createdAt, LocalDateTime modifiedAt, Room room){
+        this.writer = writer;
         this.contents = contents;
         this.createdAt = createdAt;
         this.modifiedAt = modifiedAt;
