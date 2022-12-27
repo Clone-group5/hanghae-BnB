@@ -9,7 +9,7 @@ import com.hanghae.hanghaebnb.book.repository.BookRepository;
 import com.hanghae.hanghaebnb.room.entity.Room;
 import com.hanghae.hanghaebnb.room.repository.RoomRepository;
 import com.hanghae.hanghaebnb.users.entity.Users;
-import com.hanghae.hanghaebnb.users.repository.UsersRepository;
+import com.hanghae.hanghaebnb.users.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +25,7 @@ import static com.hanghae.hanghaebnb.common.exception.ErrorCode.NOT_FOUND_USERS_
 public class BookService {
     private final BookRepository bookRepository;
     private final RoomRepository roomRepository;
-    private final UsersRepository usersRepository;
+    private final UserRepository userRepository;
     private final BookMapper bookMapper;
 
     /*
@@ -51,7 +51,7 @@ public class BookService {
     @Transactional
     public void addBook(Long roomId, RequestBook requestBook) {
 
-        Users users = usersRepository.findById(1L).orElseThrow(
+        Users users = userRepository.findById(1L).orElseThrow(
                 () -> new IllegalArgumentException(NOT_FOUND_USERS_EXCEPTION.getMsg())
         );
         //room확인
