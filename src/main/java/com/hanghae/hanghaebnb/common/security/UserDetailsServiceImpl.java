@@ -15,9 +15,9 @@ import org.springframework.stereotype.Service;
 public class UserDetailsServiceImpl implements UserDetailsService {
     private final UserRepository userRepository;
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException { // TODO: 매개변수 이름 변경하기
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException { // TODO: 매개변수 이름 변경하기
         // 사용자 조회
-        Users users = userRepository.findByEmail(username)
+        Users users = userRepository.findByEmail(email)
                 .orElseThrow(
                         () -> new CustomException(ErrorCode.NOT_FOUND_MATCH_USER_INFO)
                 );
