@@ -33,7 +33,7 @@ public class BookService {
      */
     @Transactional
     public ResponseBookList showBook() {
-        Users users = usersRepository.findById(Long.valueOf(1)).orElseThrow(
+        Users users = userRepository.findById(Long.valueOf(1)).orElseThrow(
                 () -> new IllegalArgumentException(NOT_FOUND_USERS_EXCEPTION.getMsg())
         );/* 임시로 넣어둔 것 시큐리티 구현 후 수정 */
 
