@@ -40,13 +40,15 @@ public class RoomController {
         return new ResponseEntity(new ResponseDto(200, "숙소 정보 조회가 완료되었습니다.",roomResponseDto), HttpStatus.OK);
     }
 
-    @GetMapping("/main")
+    @PostMapping("/main")
     public ResponseEntity getRooms(@RequestBody(required = false) Map<String, String> category){
 
         List<RoomListResponseDto> roomList;
         if(category == null || category.get("category").equals("전체")){
+            System.out.println("category 전체 조회");
             roomList = roomService.getRooms();
         }else{
+            System.out.println("category 별 조회 ==>> " + category.get("category"));
             roomList = roomService.getRoomsByCategory(category.get("category"));
         }
         return new ResponseEntity(new ResponseDto(200, "조회가 완료되었습니다.", roomList), HttpStatus.OK);
