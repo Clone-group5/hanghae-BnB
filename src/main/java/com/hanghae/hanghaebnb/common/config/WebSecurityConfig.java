@@ -39,7 +39,7 @@ public class WebSecurityConfig {
         // session 비활성화 설정, 세션정책 STATELESS
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-        // 아래 경로를 타고 들어온 모든 요청에 대해 허가.
+        // 아래 경로를 타고 들어온 모든 요청에 대해 접근 허가.
         http.authorizeRequests()
                 .antMatchers("/api/users/**").permitAll()
                 .antMatchers(HttpMethod.GET).permitAll();
