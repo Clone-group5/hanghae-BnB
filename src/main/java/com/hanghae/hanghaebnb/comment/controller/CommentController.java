@@ -18,12 +18,10 @@ public class CommentController {
 
     @PostMapping("/comment")
     public ResponseDto createComment(@PathVariable Long roomid,@AuthenticationPrincipal UserDetailsImpl userDetails,
-                                     RequestComment requestComment){
+                                     @RequestBody RequestComment requestComment){
 
         commentService.createComment(roomid,requestComment, userDetails.getUsers());
 
-        System.out.println(userDetails.getUsers().getNickname());
-        System.out.println("형준님 화이팅 !!!!");
         return new ResponseDto(200,"후기 등록이 완료되었습니다.",null);
 
     }
