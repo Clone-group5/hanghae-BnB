@@ -1,5 +1,6 @@
 package com.hanghae.hanghaebnb.likeRoom.service;
 
+import com.hanghae.hanghaebnb.likeRoom.dto.ResponseLikeRoom;
 import com.hanghae.hanghaebnb.likeRoom.entity.LikeRoom;
 import com.hanghae.hanghaebnb.likeRoom.repository.LikeRoomRepository;
 import com.hanghae.hanghaebnb.room.entity.Room;
@@ -24,9 +25,7 @@ public class LikeRoomService {
     private final LikeRoomRepository likeRoomRepository;
 
     @Transactional
-    public boolean likeRoom(Long roomId, Users usersReceive) {
-        boolean likeBoolean = false;
-        System.out.println("usersReceive.getUserId() = " + usersReceive.getUserId());
+    public ResponseLikeRoom likeRoom(Long roomId, Users usersReceive) {
 
         Users users = userRepository.findById(usersReceive.getUserId()).orElseThrow(
                 () -> new IllegalArgumentException(NOT_FOUND_USERS_EXCEPTION.getMsg())
@@ -36,20 +35,22 @@ public class LikeRoomService {
                 () -> new IllegalArgumentException(NOT_FOUND_ROOM_EXCEPTION.getMsg())
         );
 
+        ResponseLikeRoom responseLikeRoom = new ResponseLikeRoom();
         Optional<LikeRoom> like = likeRoomRepository.findLikeRoomByRoomsAndUsers(room, users);
 
         if(like.isPresent()){
             LikeRoom likeRoom = like.get();
             room.unLike();
             likeRoomRepository.deleteById(likeRoom.getLikeId());
+            responseLikeRoom.unlike();
         }
         else{
             LikeRoom likeRoom = new LikeRoom(users, room);
             room.like();
             likeRoomRepository.save(likeRoom);
-            likeBoolean = true;
+            responseLikeRoom.like();
         }
-        return likeBoolean;
+        return responseLikeRoom;
     }
 
 }
