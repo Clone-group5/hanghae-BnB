@@ -1,13 +1,17 @@
 package com.hanghae.hanghaebnb.common.config;
 
+import com.hanghae.hanghaebnb.common.jwt.JwtAuthFilter;
+import com.hanghae.hanghaebnb.common.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -16,23 +20,34 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @RequiredArgsConstructor
 @EnableWebSecurity // 스프링 Security 지원을 가능하게 함
 public class WebSecurityConfig {
+    private final JwtUtil jwtUtil;
 
-    // BCrypt 형식의 암호화 방식, 적응형 단방향 암호화
     @Bean
     public PasswordEncoder passwordEncoder() {
+        // BCrypt 형식의 암호화 방식, 적응형 단방향 암호화
         return new BCryptPasswordEncoder();
     }
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        // CSRF 설정
+        // CSRF 비활성화 설정
         http.csrf().disable();
 
+        // CORS 설정
         http.cors();
 
+        // session 비활성화 설정, 세션정책 STATELESS
+        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
         // "/api" 경로를 타고 들어온 모든 요청에 대해 허가.
-        http.authorizeRequests().antMatchers("/api/**").permitAll()
+        http.authorizeRequests()
+                .antMatchers("/api/users/**").permitAll();
+
+        // 어떤 요청이든 인증 과정을 거쳐야 한다.
+        http.authorizeRequests()
                 .anyRequest().authenticated();
+
+        // JwtAuthFilter 등록
+        http.addFilterBefore(new JwtAuthFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

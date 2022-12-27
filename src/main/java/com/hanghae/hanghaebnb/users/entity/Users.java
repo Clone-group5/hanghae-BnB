@@ -30,7 +30,7 @@ public class Users {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private UserRoleEnum userRole;
+    private UsersRoleEnum userRole;
 
     @OneToMany(mappedBy = "users")
     private List<Room> rooms = new ArrayList<>();
@@ -39,7 +39,7 @@ public class Users {
     private List<Book> books = new ArrayList<>();
 
     @Builder
-    public Users(String email, String password, String nickname, UserRoleEnum userRole) {
+    public Users(String email, String password, String nickname, UsersRoleEnum userRole) {
         this.email = email;
         this.password = password;
         this.nickname = nickname;
