@@ -44,13 +44,11 @@ public class RoomController {
     public ResponseEntity getRooms(@RequestBody(required = false) Map<String, String> category){
 
         List<RoomListResponseDto> roomList;
-
         if(category == null || category.get("category").equals("전체")){
             roomList = roomService.getRooms();
         }else{
             roomList = roomService.getRoomsByCategory(category.get("category"));
         }
-
         return new ResponseEntity(new ResponseDto(200, "조회가 완료되었습니다.", roomList), HttpStatus.OK);
     }
 
