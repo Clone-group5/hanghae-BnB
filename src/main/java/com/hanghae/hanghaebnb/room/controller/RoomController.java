@@ -2,15 +2,14 @@ package com.hanghae.hanghaebnb.room.controller;
 
 
 import com.hanghae.hanghaebnb.common.dto.ResponseDto;
+import com.hanghae.hanghaebnb.common.security.UserDetailsImpl;
 import com.hanghae.hanghaebnb.room.dto.RoomListResponseDto;
-import com.hanghae.hanghaebnb.room.dto.RoomRequestDto;
 import com.hanghae.hanghaebnb.room.dto.RoomResponseDto;
-import com.hanghae.hanghaebnb.room.entity.Tag;
-import com.hanghae.hanghaebnb.room.service.PhotoService;
 import com.hanghae.hanghaebnb.room.service.RoomService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,14 +21,10 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api")
 public class RoomController {
-
     private final RoomService roomService;
-    private final PhotoService photoService;
-
 
     @PostMapping("/room")
-
-    public ResponseEntity postRoom2(HttpServletRequest httpServletRequest
+    public ResponseEntity postRoom(HttpServletRequest httpServletRequest
                                     ,@RequestParam(value = "tags") String[] tags
             , @RequestParam(value ="MultipartFile", required=false) MultipartFile[] multipartFiles)
             throws Exception {
@@ -38,16 +33,27 @@ public class RoomController {
     }
 
     @GetMapping("/room/{roomId}")
-    public ResponseEntity getRoom(@PathVariable Long roomId) {
+    public ResponseEntity getRoom(@PathVariable Long roomId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         RoomResponseDto roomResponseDto = roomService.getRoom(roomId);
         return new ResponseEntity(new ResponseDto(200, "숙소 정보 조회가 완료되었습니다.",roomResponseDto), HttpStatus.OK);
     }
 
     @GetMapping("/main")
-    public ResponseEntity getRooms(){
+    public ResponseEntity getRooms(@AuthenticationPrincipal UserDetailsImpl userDetails){
+
         List<RoomListResponseDto> roomList = roomService.getRooms();
         return new ResponseEntity(new ResponseDto(200, "조회가 완료되었습니다.", roomList), HttpStatus.OK);
     }
 
+    @GetMapping("/main/{category}")
+    public ResponseEntity getRoomsByCategory(@PathVariable String category){
+        List<RoomListResponseDto> roomList = roomService.getRoomsByCategory(category);
+        return new ResponseEntity(new ResponseDto(200, "카테고리별 조회가 완료되었습니다.", roomList), HttpStatus.OK);
+    }
 
+    @DeleteMapping("/room/{roomId}")
+    public ResponseEntity deleteRoom(@PathVariable Long roomId){
+        roomService.deleteRoom(roomId);
+        return new ResponseEntity(new ResponseDto(200, "삭제가 완료되었습니다.", null), HttpStatus.OK);
+    }
 }

@@ -49,9 +49,7 @@ public class RoomService {
 
     @Transactional
     public Long postRoom(HttpServletRequest httpServletRequest, String[] tags, MultipartFile[] multipartFiles) throws JsonProcessingException,IOException {
-        System.out.println("service check");
-        //ObjectMapper objectMapper = new ObjectMapper();
-        //JsonNode jsonNode = objectMapper.readTree(jsonRoom);
+
         Room room = new Room(
                 httpServletRequest.getParameter("title")
                 , httpServletRequest.getParameter("contents")
@@ -68,14 +66,16 @@ public class RoomService {
         roomRepository.save(room);
         String folderPath = photoUpload(multipartFiles, room.getRoomId());
         room.imgUpdate(folderPath);
-        System.out.println(tags[0]);
-//        for(Tag tag : httpServletRequest.getParameter("tags")){
-//            tagRepository.save(new Tag(tag.getRoomId(), tag.getContents()));
-//        }
+
+        for(String tag : tags){
+            System.out.println(tag);
+            tagRepository.save(new Tag(room.getRoomId(), tag));
+        }
 
         return room.getRoomId();
     }
 
+    @Transactional(readOnly = true)
     public RoomResponseDto getRoom(Long roomId) {
         List<String> tagList = new ArrayList<>();
         Room room = roomRepository.findById(roomId).orElseThrow(
@@ -91,6 +91,7 @@ public class RoomService {
         return roomResponseDto;
     }
 
+    @Transactional(readOnly = true)
     public List<RoomListResponseDto> getRooms() {
         List<Room> roomList = roomRepository.findAll();
         List<RoomListResponseDto> roomResponseList= new ArrayList<>();
@@ -102,6 +103,31 @@ public class RoomService {
         }
         return roomResponseList;
 
+    }
+
+    @Transactional(readOnly = true)
+    public List<RoomListResponseDto> getRoomsByCategory(String category) {
+        List<Room> roomList = roomRepository.findAllByLocation(category);
+        List<RoomListResponseDto> roomResponseList= new ArrayList<>();
+        RoomMapper roomMapper = new RoomMapper();
+
+        for (Room room:roomList) {
+            List<String> imgs = getPhotoName(room.getRoomId());
+            roomResponseList.add(roomMapper.toRoomListResponseDto(room,imgs));
+        }
+        return roomResponseList;
+    }
+
+    @Transactional
+    public void deleteRoom(Long roomId) {
+
+        photoDelete(roomId);
+
+        roomRepository.findById(roomId).orElseThrow(
+                ()->new CustomException(ErrorCode.NOT_FOUND_ROOM_EXCEPTION)
+        );
+
+        roomRepository.deleteById(roomId);
     }
 
     //아마존 S3 사진 업로드
@@ -141,6 +167,21 @@ public class RoomService {
        return photos;
 
     }
+
+
+    public void photoDelete(Long roomId){
+
+        ObjectListing objectList = amazonS3Client.listObjects( bucket, roomId+"/" );
+        List<S3ObjectSummary> objectSummeryList =  objectList.getObjectSummaries();
+        String[] keysList = new String[ objectSummeryList.size() ];
+        int count = 0;
+        for( S3ObjectSummary summery : objectSummeryList ) {
+            keysList[count++] = summery.getKey();
+        }
+        DeleteObjectsRequest deleteObjectsRequest = new DeleteObjectsRequest( bucket ).withKeys( keysList );
+        amazonS3Client.deleteObjects(deleteObjectsRequest);
+    }
+
 
 
 }
