@@ -40,17 +40,18 @@ public class RoomController {
     }
 
     @GetMapping("/main")
-    public ResponseEntity getRooms(@AuthenticationPrincipal UserDetailsImpl userDetails){
+    public ResponseEntity getRooms(@RequestParam(value = "category", required = false) String category){
+        List<RoomListResponseDto> roomList;
 
-        List<RoomListResponseDto> roomList = roomService.getRooms();
+        if(category == null || category.equals("전체")){
+            roomList = roomService.getRooms();
+        }else{
+            roomList = roomService.getRoomsByCategory(category);
+        }
+
         return new ResponseEntity(new ResponseDto(200, "조회가 완료되었습니다.", roomList), HttpStatus.OK);
     }
 
-    @GetMapping("/main/{category}")
-    public ResponseEntity getRoomsByCategory(@PathVariable String category){
-        List<RoomListResponseDto> roomList = roomService.getRoomsByCategory(category);
-        return new ResponseEntity(new ResponseDto(200, "카테고리별 조회가 완료되었습니다.", roomList), HttpStatus.OK);
-    }
 
     @DeleteMapping("/room/{roomId}")
     public ResponseEntity deleteRoom(@PathVariable Long roomId){
