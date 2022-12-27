@@ -8,6 +8,8 @@ import com.amazonaws.services.s3.model.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hanghae.hanghaebnb.comment.entity.Comment;
+import com.hanghae.hanghaebnb.comment.repository.CommentRepository;
 import com.hanghae.hanghaebnb.common.exception.CustomException;
 import com.hanghae.hanghaebnb.common.exception.ErrorCode;
 import com.hanghae.hanghaebnb.room.Mapper.RoomMapper;
@@ -47,6 +49,7 @@ public class RoomService {
     private final RoomRepository roomRepository;
     private final TagRepository tagRepository;
 
+
     @Transactional
     public Long postRoom(HttpServletRequest httpServletRequest, String[] tags, MultipartFile[] multipartFiles, Users users) throws JsonProcessingException,IOException {
 
@@ -71,6 +74,7 @@ public class RoomService {
             tagRepository.save(new Tag(room.getRoomId(), tag));
         }
 
+
         return room.getRoomId();
     }
 
@@ -85,6 +89,7 @@ public class RoomService {
             tagList.add(tag.getContents());
         }
         List<String> imgs = getPhotoName(roomId);
+        //List<Comment> comments= commentRepository.findAllByRoomId(room.getRoomId());
         RoomMapper roomMapper = new RoomMapper();
         RoomResponseDto roomResponseDto = roomMapper.toRoomResponseDto(room,  imgs,tagList, true/*추후 보완*/);
         return roomResponseDto;
@@ -105,8 +110,11 @@ public class RoomService {
 
     @Transactional(readOnly = true)
     public List<RoomListResponseDto> getRoomsByCategory(String category) {
+
         List<Room> roomList = roomRepository.findAllByLocation(category);
+
         List<RoomListResponseDto> roomResponseList= new ArrayList<>();
+
         RoomMapper roomMapper = new RoomMapper();
 
         for (Room room:roomList) {
