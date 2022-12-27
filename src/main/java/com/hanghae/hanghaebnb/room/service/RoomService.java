@@ -12,6 +12,8 @@ import com.hanghae.hanghaebnb.common.exception.CustomException;
 import com.hanghae.hanghaebnb.common.exception.ErrorCode;
 import com.hanghae.hanghaebnb.room.Mapper.RoomMapper;
 import com.hanghae.hanghaebnb.room.Mapper.TagMapper;
+import com.hanghae.hanghaebnb.room.dto.RoomListResponseDto;
+import com.hanghae.hanghaebnb.room.dto.RoomRequestDto;
 import com.hanghae.hanghaebnb.room.dto.RoomResponseDto;
 import com.hanghae.hanghaebnb.room.entity.Room;
 import com.hanghae.hanghaebnb.room.entity.Tag;
@@ -25,6 +27,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 import java.util.ArrayList;
@@ -41,23 +45,21 @@ public class RoomService {
     private String bucket = "hanghae-bnb";//버켓 이름
     private final AmazonS3Client amazonS3Client;
     private final RoomRepository roomRepository;
-
-    //private final UserRepository userRepository;
     private final TagRepository tagRepository;
-    //room 올리기
+
     @Transactional
-    public Long postRoom(String jsonRoom,MultipartFile[] multipartFiles) throws JsonProcessingException,IOException {
-        //Users user = new Users(1L, "sfe@naver.com", "sf", "fase");
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode jsonNode = objectMapper.readTree(jsonRoom);
+    public Long postRoom(HttpServletRequest httpServletRequest, String[] tags, MultipartFile[] multipartFiles) throws JsonProcessingException,IOException {
+        System.out.println("service check");
+        //ObjectMapper objectMapper = new ObjectMapper();
+        //JsonNode jsonNode = objectMapper.readTree(jsonRoom);
         Room room = new Room(
-                jsonNode.get("title").asText()
-                ,jsonNode.get("contents").asText()
-                ,jsonNode.get("price").asLong()
-                ,jsonNode.get("extraPrice").asLong()
-                ,jsonNode.get("location").asText()
-                ,jsonNode.get("headDefault").asInt()
-                ,jsonNode.get("headMax").asInt()
+                httpServletRequest.getParameter("title")
+                , httpServletRequest.getParameter("contents")
+                , Long.parseLong(httpServletRequest.getParameter("price"))
+                , Long.parseLong(httpServletRequest.getParameter("extraPrice"))
+                , httpServletRequest.getParameter("location")
+                , Integer.parseInt(httpServletRequest.getParameter("headDefault"))
+                , Integer.parseInt(httpServletRequest.getParameter("headMax"))
                 ,""
                 ,0
                 //,user
@@ -66,17 +68,13 @@ public class RoomService {
         roomRepository.save(room);
         String folderPath = photoUpload(multipartFiles, room.getRoomId());
         room.imgUpdate(folderPath);
-        Iterator<JsonNode> tags = jsonNode.get("tags").elements();
-
-        while (tags.hasNext()) {
-            Tag tag = new Tag(room.getRoomId(), tags.next().asText() );
-            tagRepository.save(tag);
-        }
+        System.out.println(tags[0]);
+//        for(Tag tag : httpServletRequest.getParameter("tags")){
+//            tagRepository.save(new Tag(tag.getRoomId(), tag.getContents()));
+//        }
 
         return room.getRoomId();
     }
-
-
 
     public RoomResponseDto getRoom(Long roomId) {
         List<String> tagList = new ArrayList<>();
@@ -93,13 +91,25 @@ public class RoomService {
         return roomResponseDto;
     }
 
+    public List<RoomListResponseDto> getRooms() {
+        List<Room> roomList = roomRepository.findAll();
+        List<RoomListResponseDto> roomResponseList= new ArrayList<>();
+        RoomMapper roomMapper = new RoomMapper();
+
+        for (Room room:roomList) {
+            List<String> imgs = getPhotoName(room.getRoomId());
+            roomResponseList.add(roomMapper.toRoomListResponseDto(room,imgs));
+        }
+        return roomResponseList;
+
+    }
+
     //아마존 S3 사진 업로드
     public String photoUpload(MultipartFile[] multipartFiles, Long roomId) throws IOException {
         //List<String> imagePathList = new ArrayList<>();
         String folderPath = "";
         for(MultipartFile file : multipartFiles){
             String originalName = roomId + "/" + file.getOriginalFilename();
-            System.out.println("originalName >>>>> " +originalName);
             long size = file.getSize();
 
             ObjectMetadata objectMetadata = new ObjectMetadata();
@@ -111,31 +121,26 @@ public class RoomService {
                             .withCannedAcl(CannedAccessControlList.PublicRead)
             );
 
-            //String imagePath = amazonS3Client.getUrl(bucket, originalName).toString();
             folderPath = amazonS3Client.getUrl(bucket, roomId.toString()).toString();
-            System.out.println("image path :::::::: 파일업로드 :::::::::: " + folderPath);
-            //imagePathList.add(imagePath);
-
         }
         return folderPath;
     }
 
     public List<String> getPhotoName(Long roomId){
 
-        String folderPath = "";
         ListObjectsRequest listObjectsRequest = new ListObjectsRequest()
                                                         .withBucketName(bucket)
                                                         .withPrefix(roomId+"/");
         ObjectListing objectListing  = amazonS3Client.listObjects(listObjectsRequest);
         List<String> photos = new ArrayList<>();
-        HttpHeaders httpHeaders = new HttpHeaders();
 
         for (S3ObjectSummary summary:objectListing.getObjectSummaries()) {
-            System.out.println(summary.getKey());
-            photos.add(summary.getKey());
+            photos.add(amazonS3Client.getUrl(bucket, summary.getKey()).toString());
        }
 
        return photos;
 
     }
+
+
 }
