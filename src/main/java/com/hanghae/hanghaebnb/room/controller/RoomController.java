@@ -3,10 +3,7 @@ package com.hanghae.hanghaebnb.room.controller;
 
 import com.hanghae.hanghaebnb.common.dto.ResponseDto;
 import com.hanghae.hanghaebnb.room.dto.RoomListResponseDto;
-import com.hanghae.hanghaebnb.room.dto.RoomRequestDto;
 import com.hanghae.hanghaebnb.room.dto.RoomResponseDto;
-import com.hanghae.hanghaebnb.room.entity.Tag;
-import com.hanghae.hanghaebnb.room.service.PhotoService;
 import com.hanghae.hanghaebnb.room.service.RoomService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -15,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -24,7 +20,6 @@ import java.util.List;
 public class RoomController {
 
     private final RoomService roomService;
-    private final PhotoService photoService;
 
 
     @PostMapping("/room")
