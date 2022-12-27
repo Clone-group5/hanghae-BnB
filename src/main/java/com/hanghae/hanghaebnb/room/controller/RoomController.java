@@ -45,8 +45,10 @@ public class RoomController {
 
         List<RoomListResponseDto> roomList;
         if(category == null || category.get("category").equals("전체")){
+            System.out.println("category 전체 조회");
             roomList = roomService.getRooms();
         }else{
+            System.out.println("category 별 조회 ==>> " + category.get("category"));
             roomList = roomService.getRoomsByCategory(category.get("category"));
         }
         return new ResponseEntity(new ResponseDto(200, "조회가 완료되었습니다.", roomList), HttpStatus.OK);
