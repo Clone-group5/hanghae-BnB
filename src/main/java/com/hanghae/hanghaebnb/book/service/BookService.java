@@ -15,6 +15,9 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import static com.hanghae.hanghaebnb.common.exception.ErrorCode.*;
@@ -45,7 +48,7 @@ public class BookService {
     }
 
     @Transactional
-    public void addBook(Long roomId, RequestBook requestBook, Users usersReceive) {
+    public void addBook(Long roomId, RequestBook requestBook, Users usersReceive) throws ParseException {
 
         Users users = userRepository.findById(usersReceive.getUserId()).orElseThrow(
                 () -> new IllegalArgumentException(NOT_FOUND_USERS_EXCEPTION.getMsg())
@@ -57,9 +60,26 @@ public class BookService {
         Long total = room.getPrice();
 
         if(requestBook.getHeadCount() > room.getHeadDefault()){
-            total += room.getExtraPrice();
+            Long count = requestBook.getHeadCount() - room.getHeadDefault();
+            total += (room.getExtraPrice() * count);
         }
-        
+
+        String checkIn = requestBook.getCheckIn();
+        String checkOut = requestBook.getCheckOut();
+
+        checkIn = checkIn.replace("-", "/");
+        checkOut = checkOut.replace("-", "/");
+
+        Date formatCheckIn = new SimpleDateFormat("yyyy/MM/dd").parse(checkIn);
+        Date formatCheckOut = new SimpleDateFormat("yyyy/MM/dd").parse(checkOut);
+
+        long diffSec = (formatCheckOut.getTime() - formatCheckIn.getTime()) / 1000;
+        long diffDays = diffSec / (24*60*60);
+
+        if(diffDays > 1){
+            total += (room.getExtraPrice() * (diffDays-1));
+        }
+
         if(!total.equals(requestBook.getTotalPrice())){
             throw new IllegalArgumentException(NOT_MATCH_TOTAL_PRICE_EXCEPTION.getMsg());
         }
