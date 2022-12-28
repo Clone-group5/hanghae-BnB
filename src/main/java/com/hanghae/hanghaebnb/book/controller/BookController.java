@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
@@ -31,7 +33,7 @@ public class BookController {
      * 예약 등록
      */
     @PostMapping("/room/{roomId}/book")
-    public ResponseEntity<ResponseDto> addBook(@PathVariable Long roomId, @RequestBody RequestBook requestBook, @AuthenticationPrincipal UserDetailsImpl userDetails){
+    public ResponseEntity<ResponseDto> addBook(@PathVariable Long roomId, @RequestBody RequestBook requestBook, @AuthenticationPrincipal UserDetailsImpl userDetails) throws ParseException {
         bookService.addBook(roomId, requestBook, userDetails.getUsers());
         ResponseDto responseDto = new ResponseDto(200, "예약이 완료되었습니다.", null);
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
