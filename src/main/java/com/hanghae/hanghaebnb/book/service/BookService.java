@@ -17,8 +17,7 @@ import javax.transaction.Transactional;
 
 import java.util.List;
 
-import static com.hanghae.hanghaebnb.common.exception.ErrorCode.NOT_FOUND_ROOM_EXCEPTION;
-import static com.hanghae.hanghaebnb.common.exception.ErrorCode.NOT_FOUND_USERS_EXCEPTION;
+import static com.hanghae.hanghaebnb.common.exception.ErrorCode.*;
 
 @RequiredArgsConstructor
 @Service
@@ -32,9 +31,9 @@ public class BookService {
      * 예약 조회
      */
     @Transactional
-    public ResponseBookList showBook() {
-        Users users = userRepository.findById(Long.valueOf(1)).orElseThrow(
-                () -> new IllegalArgumentException("없는 유저입니다.")
+    public ResponseBookList showBook(Users usersReceive) {
+        Users users = userRepository.findById(usersReceive.getUserId()).orElseThrow(
+                () -> new IllegalArgumentException(NOT_FOUND_USERS_EXCEPTION.getMsg())
         );/* 임시로 넣어둔 것 시큐리티 구현 후 수정 */
 
         ResponseBookList responseBookList = new ResponseBookList();
@@ -45,25 +44,24 @@ public class BookService {
         return responseBookList;
     }
 
-    /*
-     * 예약 등록
-     */
     @Transactional
-    public void addBook(Long roomId, RequestBook requestBook) {
+    public void addBook(Long roomId, RequestBook requestBook, Users usersReceive) {
 
-        Users users = userRepository.findById(1L).orElseThrow(
+        Users users = userRepository.findById(usersReceive.getUserId()).orElseThrow(
                 () -> new IllegalArgumentException(NOT_FOUND_USERS_EXCEPTION.getMsg())
         );
-        //room확인
         Room room = roomRepository.findById(roomId).orElseThrow(
                 () -> new IllegalArgumentException(NOT_FOUND_ROOM_EXCEPTION.getMsg())
         );
 
-        //totalprice 계산
         Long total = room.getPrice();
 
         if(requestBook.getHeadCount() > room.getHeadDefault()){
             total += room.getExtraPrice();
+        }
+        
+        if(!total.equals(requestBook.getTotalPrice())){
+            throw new IllegalArgumentException(NOT_MATCH_TOTAL_PRICE_EXCEPTION.getMsg());
         }
 
         Book book = bookMapper.toBook(room, requestBook, total, users);
@@ -71,18 +69,16 @@ public class BookService {
         bookRepository.save(book);
     }
 
-    /*
-     * 예약 취소
-     */
     @Transactional
-    public void deleteBook(Long bookId) {
-        //예약 확인
+    public void deleteBook(Long bookId, Users usersReceive) {
+
+        Users users = userRepository.findById(usersReceive.getUserId()).orElseThrow(
+                () -> new IllegalArgumentException(NOT_FOUND_USERS_EXCEPTION.getMsg())
+        );
         Book book = bookRepository.findById(bookId).orElseThrow(
                 () -> new IllegalArgumentException(NOT_FOUND_ROOM_EXCEPTION.getMsg())
         );
-        //유저 확인 추가 예정
 
-        //예약 취소
         bookRepository.deleteById(bookId);
     }
 

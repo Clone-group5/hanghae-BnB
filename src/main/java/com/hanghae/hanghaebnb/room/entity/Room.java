@@ -57,6 +57,9 @@ public class Room {
     @OneToMany(mappedBy = "room")
     private List<Book> books = new ArrayList<>();
 
+    @OneToMany
+    private List<Tag> tags = new ArrayList<>();
+
     @Builder
     public Room(String title
                 ,String contents
@@ -67,7 +70,7 @@ public class Room {
                 ,Integer headMax
                 ,String img
                 ,Integer likeCount
-                //,Users users
+                ,Users users
                 ) {
 
         this.title = title;
@@ -79,7 +82,7 @@ public class Room {
         this.headMax = headMax;
         this.likeCount = likeCount;
         this.img = img;
-        //this.users = users;
+        this.users = users;
 
     }
 
@@ -90,6 +93,14 @@ public class Room {
 
     public void imgUpdate(String img){
         this.img = img;
+    }
+
+    public void like(){
+        this.likeCount++;
+    }
+
+    public void unLike(){
+        this.likeCount--;
     }
 
 

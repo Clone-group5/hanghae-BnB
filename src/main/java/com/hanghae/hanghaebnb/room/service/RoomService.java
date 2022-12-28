@@ -8,8 +8,14 @@ import com.amazonaws.services.s3.model.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hanghae.hanghaebnb.comment.dto.ResponseComment;
+import com.hanghae.hanghaebnb.comment.entity.Comment;
+import com.hanghae.hanghaebnb.comment.mapper.CommentMapper;
+import com.hanghae.hanghaebnb.comment.repository.CommentRepository;
 import com.hanghae.hanghaebnb.common.exception.CustomException;
 import com.hanghae.hanghaebnb.common.exception.ErrorCode;
+import com.hanghae.hanghaebnb.likeRoom.entity.LikeRoom;
+import com.hanghae.hanghaebnb.likeRoom.repository.LikeRoomRepository;
 import com.hanghae.hanghaebnb.room.Mapper.RoomMapper;
 import com.hanghae.hanghaebnb.room.Mapper.TagMapper;
 import com.hanghae.hanghaebnb.room.dto.RoomListResponseDto;
@@ -20,8 +26,10 @@ import com.hanghae.hanghaebnb.room.entity.Tag;
 import com.hanghae.hanghaebnb.room.repository.RoomRepository;
 import com.hanghae.hanghaebnb.room.repository.TagRepository;
 import com.hanghae.hanghaebnb.users.entity.Users;
+import com.hanghae.hanghaebnb.users.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,12 +54,14 @@ public class RoomService {
     private final AmazonS3Client amazonS3Client;
     private final RoomRepository roomRepository;
     private final TagRepository tagRepository;
+    private final UserRepository userRepository;
+    private final LikeRoomRepository likeRoomRepository;
+
+    private final CommentRepository commentRepository;
 
     @Transactional
-    public Long postRoom(HttpServletRequest httpServletRequest, String[] tags, MultipartFile[] multipartFiles) throws JsonProcessingException,IOException {
-        System.out.println("service check");
-        //ObjectMapper objectMapper = new ObjectMapper();
-        //JsonNode jsonNode = objectMapper.readTree(jsonRoom);
+    public Long postRoom(HttpServletRequest httpServletRequest, String[] tags, MultipartFile[] multipartFiles, Users users) throws IOException {
+
         Room room = new Room(
                 httpServletRequest.getParameter("title")
                 , httpServletRequest.getParameter("contents")
@@ -62,37 +72,68 @@ public class RoomService {
                 , Integer.parseInt(httpServletRequest.getParameter("headMax"))
                 ,""
                 ,0
-                //,user
+                ,users
         );
 
         roomRepository.save(room);
         String folderPath = photoUpload(multipartFiles, room.getRoomId());
         room.imgUpdate(folderPath);
-        System.out.println(tags[0]);
-//        for(Tag tag : httpServletRequest.getParameter("tags")){
-//            tagRepository.save(new Tag(tag.getRoomId(), tag.getContents()));
-//        }
+
+        for(String tag : tags){
+            tagRepository.save(new Tag(room.getRoomId(), tag));
+        }
+
 
         return room.getRoomId();
     }
 
-    public RoomResponseDto getRoom(Long roomId) {
+    @Transactional(readOnly = true)
+    public RoomResponseDto getRoom(Long roomId, Long userId) {
+
         List<String> tagList = new ArrayList<>();
+
         Room room = roomRepository.findById(roomId).orElseThrow(
                 ()->new CustomException(ErrorCode.NOT_FOUND_ROOM_EXCEPTION)
         );
+
+        Boolean likeByLoginUser = false;
+
+        if(userId != -1){
+
+            Users users = userRepository.findById(userId).orElseThrow(
+                    () -> new CustomException(ErrorCode.NOT_FOUND_USERS_EXCEPTION)
+            );
+
+            Optional<LikeRoom> like = likeRoomRepository.findLikeRoomByRoomsAndUsers(room, users);
+
+            if (like.isPresent()) {
+                likeByLoginUser = true;
+            }
+        }
+
         List<Tag> tags = tagRepository.findAllByRoomId(roomId);
         for (Tag tag:tags) {
             tagList.add(tag.getContents());
         }
+
         List<String> imgs = getPhotoName(roomId);
+
+
+        CommentMapper commentMapper = new CommentMapper();
+
+        List<ResponseComment> responseComments = new ArrayList<>();
+        for (Comment comment:room.getComments()) {
+            responseComments.add(commentMapper.toResponseComment(comment));
+        }
+
         RoomMapper roomMapper = new RoomMapper();
-        RoomResponseDto roomResponseDto = roomMapper.toRoomResponseDto(room,  imgs,tagList, true/*추후 보완*/);
+        RoomResponseDto roomResponseDto = roomMapper.toRoomResponseDto(room,  imgs, responseComments, tagList,  likeByLoginUser);
         return roomResponseDto;
     }
 
+    @Transactional(readOnly = true)
     public List<RoomListResponseDto> getRooms() {
-        List<Room> roomList = roomRepository.findAll();
+        List<Room> roomList = roomRepository.findAll(Sort.by(Sort.Direction.DESC, "roomId"));
         List<RoomListResponseDto> roomResponseList= new ArrayList<>();
         RoomMapper roomMapper = new RoomMapper();
 
@@ -101,7 +142,39 @@ public class RoomService {
             roomResponseList.add(roomMapper.toRoomListResponseDto(room,imgs));
         }
         return roomResponseList;
+    }
 
+    @Transactional(readOnly = true)
+    public List<RoomListResponseDto> getRoomsByCategory(String category) {
+
+        List<Room> roomList = roomRepository.findAllByLocationOrderByRoomIdDesc(category);
+
+        List<RoomListResponseDto> roomResponseList= new ArrayList<>();
+
+        RoomMapper roomMapper = new RoomMapper();
+
+        for (Room room:roomList) {
+            List<String> imgs = getPhotoName(room.getRoomId());
+            roomResponseList.add(roomMapper.toRoomListResponseDto(room,imgs));
+        }
+
+        return roomResponseList;
+    }
+
+    @Transactional
+    public void deleteRoom(Long roomId, Users users) {
+
+        Room room = roomRepository.findById(roomId).orElseThrow(
+                ()->new CustomException(ErrorCode.NOT_FOUND_ROOM_EXCEPTION)
+        );
+        if(room.getUsers().getUserId() != users.getUserId()){
+            throw new CustomException(ErrorCode.AUTHORIZATION_FAIL);
+        }
+        commentRepository.deleteByRoom(room);
+        likeRoomRepository.deleteByRooms(room);
+        tagRepository.deleteByRoomId(room.getRoomId());
+        roomRepository.deleteById(roomId);
+        photoDelete(roomId);
     }
 
     //아마존 S3 사진 업로드
@@ -141,6 +214,21 @@ public class RoomService {
        return photos;
 
     }
+
+
+    public void photoDelete(Long roomId){
+
+        ObjectListing objectList = amazonS3Client.listObjects( bucket, roomId+"/" );
+        List<S3ObjectSummary> objectSummeryList =  objectList.getObjectSummaries();
+        String[] keysList = new String[ objectSummeryList.size() ];
+        int count = 0;
+        for( S3ObjectSummary summery : objectSummeryList ) {
+            keysList[count++] = summery.getKey();
+        }
+        DeleteObjectsRequest deleteObjectsRequest = new DeleteObjectsRequest( bucket ).withKeys( keysList );
+        amazonS3Client.deleteObjects(deleteObjectsRequest);
+    }
+
 
 
 }

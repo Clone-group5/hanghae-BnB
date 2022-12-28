@@ -1,6 +1,7 @@
 package com.hanghae.hanghaebnb.room.Mapper;
 
 
+import com.hanghae.hanghaebnb.comment.dto.ResponseComment;
 import com.hanghae.hanghaebnb.room.dto.RoomListResponseDto;
 import com.hanghae.hanghaebnb.room.dto.RoomRequestDto;
 import com.hanghae.hanghaebnb.room.dto.RoomResponseDto;
@@ -26,7 +27,7 @@ public class RoomMapper {
                 .build();
     }
 
-    public RoomResponseDto toRoomResponseDto(Room room, List<String> imgs, List<String> tags, Boolean like){
+    public RoomResponseDto toRoomResponseDto(Room room, List<String> imgs, List<ResponseComment> responseComment, List<String> tags, Boolean like){
         return RoomResponseDto.builder()
                 .roomId(room.getRoomId())
                 .hostName(room.getUsers().getNickname())
@@ -41,6 +42,8 @@ public class RoomMapper {
                 .like(like)
                 .imgs(imgs)
                 .tags(tags)
+                .comments(responseComment)
+                .books(room.getBooks())
                 .build();
     }
 

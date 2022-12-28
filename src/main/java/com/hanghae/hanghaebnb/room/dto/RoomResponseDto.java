@@ -2,17 +2,11 @@ package com.hanghae.hanghaebnb.room.dto;
 
 
 import com.hanghae.hanghaebnb.book.entity.Book;
-import com.hanghae.hanghaebnb.comment.entity.Comment;
-import com.hanghae.hanghaebnb.room.entity.Tag;
-import com.hanghae.hanghaebnb.users.entity.Users;
+import com.hanghae.hanghaebnb.comment.dto.ResponseComment;
+
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import javax.persistence.Column;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,7 +26,7 @@ public class RoomResponseDto {
     private Boolean like;
     private List<String> tags = new ArrayList<>();
     private List<String> imgs = new ArrayList<>();
-    //private List<Comment> comments = new ArrayList<>();
+    private List<ResponseComment> comments = new ArrayList<>();
     //private List<Book> books = new ArrayList<>();
     @Builder
     public RoomResponseDto(Long roomId
@@ -46,6 +40,8 @@ public class RoomResponseDto {
                             ,Long extraPrice
                            ,List<String> imgs
                            ,List<String> tags
+                            ,List<ResponseComment> comments
+                           ,List<Book> books
                            ,Integer likeCount
                            ,Boolean like
                            ){
@@ -60,6 +56,8 @@ public class RoomResponseDto {
         this.extraPrice = extraPrice;
         this.imgs = imgs;
         this.tags = tags;
+        this.comments = comments;
+        //this.books = books;
         this.likeCount = likeCount;
         this.like = like;
     }

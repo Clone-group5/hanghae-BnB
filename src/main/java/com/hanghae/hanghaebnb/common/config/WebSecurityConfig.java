@@ -28,6 +28,7 @@ public class WebSecurityConfig {
         // BCrypt 형식의 암호화 방식, 적응형 단방향 암호화
         return new BCryptPasswordEncoder();
     }
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         // CSRF 비활성화 설정
@@ -42,6 +43,7 @@ public class WebSecurityConfig {
         // 아래 경로를 타고 들어온 모든 요청에 대해 접근 허가.
         http.authorizeRequests()
                 .antMatchers("/api/users/**").permitAll()
+                .antMatchers("/api/main/**").permitAll()
                 .antMatchers(HttpMethod.GET).permitAll();
 
         // 인증 과정을 거쳐야 한다.

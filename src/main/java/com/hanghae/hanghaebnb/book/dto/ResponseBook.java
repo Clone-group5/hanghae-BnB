@@ -7,6 +7,8 @@ import lombok.Getter;
 public class ResponseBook {
     private Long roomId;
 
+    private Long bookId;
+
     private String title;
 
     private String checkIn;
@@ -20,6 +22,7 @@ public class ResponseBook {
 
     public ResponseBook(Book book){
         this.roomId = book.getRoom().getRoomId();
+        this.bookId = book.getBookId();
         this.title = book.getRoom().getTitle();
         this.checkIn = book.getCheckIn();
         this.checkOut = book.getCheckOut();
