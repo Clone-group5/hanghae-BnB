@@ -14,13 +14,15 @@ import java.time.LocalDateTime;
 @Getter
 public class ResponseComment {
 
+    private Long commentId;
     private String writer;
     private String contents;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 
     @Builder
-    public ResponseComment(String writer, String contents, LocalDateTime createdAt, LocalDateTime modifiedAt){
+    public ResponseComment(Long commentId, String writer, String contents, LocalDateTime createdAt, LocalDateTime modifiedAt){
+        this.commentId = commentId;
         this.writer = writer;
         this.contents = contents;
         this.createdAt = createdAt;

@@ -29,6 +29,7 @@ public class CommentMapper {
 
     public ResponseComment toResponseComment(Comment comment){
         return ResponseComment.builder()
+                .commentId(comment.getCommentId())
                 .writer(comment.getWriter())
                 .contents(comment.getContents())
                 .createdAt(comment.getCreatedAt())
