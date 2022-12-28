@@ -64,7 +64,7 @@ jobs:
         env:
           OCCUPY_SECRET4: ${{ secrets.OCCUPY_SECRET4 }}
           OCCUPY_SECRET4_DIR: src/main/resources
-          OCCUPY_SECRET4_DIR_FILE_NAME: application-jwt.properties
+          OCCUPY_SECRET4_DIR_FILE_NAME: application-kakao.properties
         run: echo $OCCUPY_SECRET4 | base64 --decode > $OCCUPY_SECRET4_DIR/$OCCUPY_SECRET4_DIR_FILE_NAME
 
       # 권한 설정
