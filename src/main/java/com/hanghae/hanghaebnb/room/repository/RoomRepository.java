@@ -8,5 +8,6 @@ import java.util.Optional;
 
 public interface RoomRepository extends JpaRepository<Room, Long> {
 
-    List<Room> findAllByLocation(String Location);
+
+    List<Room> findAllByLocationOrderByRoomIdDesc(String Location);
 }

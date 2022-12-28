@@ -29,6 +29,7 @@ import com.hanghae.hanghaebnb.users.entity.Users;
 import com.hanghae.hanghaebnb.users.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -132,7 +133,7 @@ public class RoomService {
 
     @Transactional(readOnly = true)
     public List<RoomListResponseDto> getRooms() {
-        List<Room> roomList = roomRepository.findAll();
+        List<Room> roomList = roomRepository.findAll(Sort.by(Sort.Direction.DESC, "roomId"));
         List<RoomListResponseDto> roomResponseList= new ArrayList<>();
         RoomMapper roomMapper = new RoomMapper();
 
@@ -146,7 +147,7 @@ public class RoomService {
     @Transactional(readOnly = true)
     public List<RoomListResponseDto> getRoomsByCategory(String category) {
 
-        List<Room> roomList = roomRepository.findAllByLocation(category);
+        List<Room> roomList = roomRepository.findAllByLocationOrderByRoomIdDesc(category);
 
         List<RoomListResponseDto> roomResponseList= new ArrayList<>();
 
