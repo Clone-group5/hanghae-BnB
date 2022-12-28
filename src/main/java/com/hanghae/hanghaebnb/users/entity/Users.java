@@ -19,6 +19,9 @@ public class Users {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
 
+    @Column(nullable = true)
+    private Long kakaoId;
+
     @Column(nullable = false)
     private String email;
 
@@ -39,10 +42,16 @@ public class Users {
     private List<Book> books = new ArrayList<>();
 
     @Builder
-    public Users(String email, String password, String nickname, UsersRoleEnum userRole) {
+    public Users(String email, String password, String nickname, UsersRoleEnum userRole, Long kakaoId) {
         this.email = email;
+        this.kakaoId = kakaoId;
         this.password = password;
         this.nickname = nickname;
         this.userRole = userRole;
+    }
+
+    public Users kakaoIdUpdate(Long kakaoId) {
+        this.kakaoId = kakaoId;
+        return this;
     }
 }
