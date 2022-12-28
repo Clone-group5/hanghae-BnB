@@ -17,8 +17,7 @@ import javax.transaction.Transactional;
 
 import java.util.List;
 
-import static com.hanghae.hanghaebnb.common.exception.ErrorCode.NOT_FOUND_ROOM_EXCEPTION;
-import static com.hanghae.hanghaebnb.common.exception.ErrorCode.NOT_FOUND_USERS_EXCEPTION;
+import static com.hanghae.hanghaebnb.common.exception.ErrorCode.*;
 
 @RequiredArgsConstructor
 @Service
@@ -59,6 +58,10 @@ public class BookService {
 
         if(requestBook.getHeadCount() > room.getHeadDefault()){
             total += room.getExtraPrice();
+        }
+        
+        if(!total.equals(requestBook.getTotalPrice())){
+            throw new IllegalArgumentException(NOT_MATCH_TOTAL_PRICE_EXCEPTION.getMsg());
         }
 
         Book book = bookMapper.toBook(room, requestBook, total, users);

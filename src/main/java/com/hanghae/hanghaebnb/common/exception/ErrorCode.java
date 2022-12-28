@@ -15,6 +15,7 @@ public enum ErrorCode {
     AUTHORIZATION_FAIL(401, "권한이 없습니다."),
     NOT_FOUND_MATCH_USER_INFO(400, "일치하는 회원정보가 존재하지 않습니다."),
     NOT_FOUND_COMMENT_EXCEPTION(404, "존재하지 않는 후기입니다."),
+    NOT_MATCH_TOTAL_PRICE_EXCEPTION(400, "금액이 일치하지 않습니다"),
     NOT_MATCH_USER_INFO(400, "권한이 없습니다.");
 
     private final int StatusCode;

@@ -13,4 +13,6 @@ public class RequestBook {
     private String checkOut;
 
     private Long headCount;
+
+    private Long totalPrice;
 }
