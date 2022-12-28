@@ -13,10 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.hanghae.hanghaebnb.common.exception.ErrorCode.NOT_FOUND_ROOM_EXCEPTION;
-import static com.hanghae.hanghaebnb.common.exception.ErrorCode.NOT_FOUND_COMMENT_EXCEPTION;
-import static com.hanghae.hanghaebnb.common.exception.ErrorCode.NOT_MATCH_USER_INFO;
-
+import static com.hanghae.hanghaebnb.common.exception.ErrorCode.*;
 
 
 @RequiredArgsConstructor
@@ -55,6 +52,19 @@ public class CommentService {
         comment.update(requestComment.getContents());
 
         commentRepository.save(comment);
+
+    }
+
+    public void deleteComment(Long commentid, Users users) {
+
+        Comment comment = commentRepository.findById(commentid).orElseThrow(
+                () -> new CustomException(NOT_FOUND_COMMENT_EXCEPTION)
+        );
+        if(!comment.getUsers().getUserId().equals(users.getUserId())){
+            throw new CustomException(NOT_MATCH_USER_INFO);
+        }
+
+        commentRepository.deleteById(commentid);
 
     }
 }

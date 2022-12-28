@@ -32,5 +32,10 @@ public class CommentController {
         return new ResponseDto(200, "후기 수정이 완료되었습니다.",null);
     }
 
+    @DeleteMapping("/comment/{commentid}")
+    public ResponseDto deleteComment(@PathVariable Long commentid, @AuthenticationPrincipal UserDetailsImpl userDetails){
 
+        commentService.deleteComment(commentid, userDetails.getUsers());
+        return new ResponseDto(200, "후기가 삭제되었습니다.", null);
+    }
 }
