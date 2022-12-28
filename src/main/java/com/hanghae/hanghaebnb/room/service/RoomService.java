@@ -8,10 +8,14 @@ import com.amazonaws.services.s3.model.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hanghae.hanghaebnb.comment.dto.ResponseComment;
 import com.hanghae.hanghaebnb.comment.entity.Comment;
+import com.hanghae.hanghaebnb.comment.mapper.CommentMapper;
 import com.hanghae.hanghaebnb.comment.repository.CommentRepository;
 import com.hanghae.hanghaebnb.common.exception.CustomException;
 import com.hanghae.hanghaebnb.common.exception.ErrorCode;
+import com.hanghae.hanghaebnb.likeRoom.entity.LikeRoom;
+import com.hanghae.hanghaebnb.likeRoom.repository.LikeRoomRepository;
 import com.hanghae.hanghaebnb.room.Mapper.RoomMapper;
 import com.hanghae.hanghaebnb.room.Mapper.TagMapper;
 import com.hanghae.hanghaebnb.room.dto.RoomListResponseDto;
@@ -22,6 +26,7 @@ import com.hanghae.hanghaebnb.room.entity.Tag;
 import com.hanghae.hanghaebnb.room.repository.RoomRepository;
 import com.hanghae.hanghaebnb.room.repository.TagRepository;
 import com.hanghae.hanghaebnb.users.entity.Users;
+import com.hanghae.hanghaebnb.users.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.HttpHeaders;
@@ -48,10 +53,11 @@ public class RoomService {
     private final AmazonS3Client amazonS3Client;
     private final RoomRepository roomRepository;
     private final TagRepository tagRepository;
-    private final CommentRepository commentRepository;
+    private final UserRepository userRepository;
+    private final LikeRoomRepository likeRoomRepository;
 
     @Transactional
-    public Long postRoom(HttpServletRequest httpServletRequest, String[] tags, MultipartFile[] multipartFiles, Users users) throws JsonProcessingException,IOException {
+    public Long postRoom(HttpServletRequest httpServletRequest, String[] tags, MultipartFile[] multipartFiles, Users users) throws IOException {
 
         Room room = new Room(
                 httpServletRequest.getParameter("title")
@@ -80,20 +86,45 @@ public class RoomService {
 
     @Transactional(readOnly = true)
     public RoomResponseDto getRoom(Long roomId, Long userId) {
+
         List<String> tagList = new ArrayList<>();
+
         Room room = roomRepository.findById(roomId).orElseThrow(
                 ()->new CustomException(ErrorCode.NOT_FOUND_ROOM_EXCEPTION)
         );
+
+        Boolean likeByLoginUser = false;
+
+        if(userId != -1){
+
+            Users users = userRepository.findById(userId).orElseThrow(
+                    () -> new CustomException(ErrorCode.NOT_FOUND_USERS_EXCEPTION)
+            );
+
+            Optional<LikeRoom> like = likeRoomRepository.findLikeRoomByRoomsAndUsers(room, users);
+
+            if (like.isPresent()) {
+                likeByLoginUser = true;
+            }
+        }
+
         List<Tag> tags = tagRepository.findAllByRoomId(roomId);
         for (Tag tag:tags) {
             tagList.add(tag.getContents());
         }
-        List<String> imgs = getPhotoName(roomId);
-        //List<Comment> comments= commentRepository.findAllByRoomId(room.getRoomId());
 
+        List<String> imgs = getPhotoName(roomId);
+
+
+        CommentMapper commentMapper = new CommentMapper();
+
+        List<ResponseComment> responseComments = new ArrayList<>();
+        for (Comment comment:room.getComments()) {
+            responseComments.add(commentMapper.toResponseComment(comment));
+        }
 
         RoomMapper roomMapper = new RoomMapper();
-        RoomResponseDto roomResponseDto = roomMapper.toRoomResponseDto(room,  imgs, tagList, true/*추후 보완*/);
+        RoomResponseDto roomResponseDto = roomMapper.toRoomResponseDto(room,  imgs, responseComments, tagList,  likeByLoginUser);
         return roomResponseDto;
     }
 
