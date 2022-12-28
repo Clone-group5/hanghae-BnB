@@ -6,6 +6,7 @@ import com.hanghae.hanghaebnb.common.security.UserDetailsImpl;
 import com.hanghae.hanghaebnb.room.dto.RoomListResponseDto;
 import com.hanghae.hanghaebnb.room.dto.RoomResponseDto;
 import com.hanghae.hanghaebnb.room.service.RoomService;
+import com.hanghae.hanghaebnb.users.entity.Users;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +28,7 @@ public class RoomController {
     @PostMapping("/room")
     public ResponseEntity postRoom(HttpServletRequest httpServletRequest
                                     ,@RequestParam(value = "tags") String[] tags
-            , @RequestParam(value ="MultipartFile", required=false) MultipartFile[] multipartFiles
+            , @RequestParam(value ="MultipartFile") MultipartFile[] multipartFiles
             , @AuthenticationPrincipal UserDetailsImpl userDetails)
             throws Exception {
         Long roomId = roomService.postRoom(httpServletRequest, tags, multipartFiles, userDetails.getUsers());
@@ -36,7 +37,8 @@ public class RoomController {
 
     @GetMapping("/room/{roomId}")
     public ResponseEntity getRoom(@PathVariable Long roomId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        RoomResponseDto roomResponseDto = roomService.getRoom(roomId, userDetails.getUsers());
+        Long userId = userDetails==null?-1:userDetails.getUsers().getUserId();
+        RoomResponseDto roomResponseDto = roomService.getRoom(roomId, userId);
         return new ResponseEntity(new ResponseDto(200, "숙소 정보 조회가 완료되었습니다.",roomResponseDto), HttpStatus.OK);
     }
 
@@ -45,10 +47,10 @@ public class RoomController {
 
         List<RoomListResponseDto> roomList;
         if(category == null || category.get("category").equals("전체")){
-            System.out.println("category 전체 조회");
+
             roomList = roomService.getRooms();
         }else{
-            System.out.println("category 별 조회 ==>> " + category.get("category"));
+
             roomList = roomService.getRoomsByCategory(category.get("category"));
         }
         return new ResponseEntity(new ResponseDto(200, "조회가 완료되었습니다.", roomList), HttpStatus.OK);

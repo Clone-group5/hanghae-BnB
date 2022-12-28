@@ -57,6 +57,9 @@ public class Room {
     @OneToMany(mappedBy = "room")
     private List<Book> books = new ArrayList<>();
 
+    @OneToMany
+    private List<Tag> tags = new ArrayList<>();
+
     @Builder
     public Room(String title
                 ,String contents
