@@ -115,7 +115,7 @@ public class KakaoService {
 
         log.info("카카오 사용자 정보: " + id + ", " + nickname + ", " + email);
 
-        return new KakaoUserInfoDto(id, nickname, email);
+        return new KakaoUserInfoDto(id, email, nickname);
     }
 
     // 필요시에 회원가입
