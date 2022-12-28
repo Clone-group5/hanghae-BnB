@@ -56,6 +56,8 @@ public class RoomService {
     private final UserRepository userRepository;
     private final LikeRoomRepository likeRoomRepository;
 
+    private final CommentRepository commentRepository;
+
     @Transactional
     public Long postRoom(HttpServletRequest httpServletRequest, String[] tags, MultipartFile[] multipartFiles, Users users) throws IOException {
 
@@ -161,16 +163,17 @@ public class RoomService {
     @Transactional
     public void deleteRoom(Long roomId, Users users) {
 
-        photoDelete(roomId);
-
         Room room = roomRepository.findById(roomId).orElseThrow(
                 ()->new CustomException(ErrorCode.NOT_FOUND_ROOM_EXCEPTION)
         );
         if(room.getUsers().getUserId() != users.getUserId()){
             throw new CustomException(ErrorCode.AUTHORIZATION_FAIL);
         }
-
+        commentRepository.deleteByRoom(room);
+        likeRoomRepository.deleteByRooms(room);
+        tagRepository.deleteByRoomId(room.getRoomId());
         roomRepository.deleteById(roomId);
+        photoDelete(roomId);
     }
 
     //아마존 S3 사진 업로드
