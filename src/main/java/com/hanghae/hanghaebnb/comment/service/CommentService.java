@@ -21,7 +21,6 @@ import static com.hanghae.hanghaebnb.common.exception.ErrorCode.*;
 public class CommentService {
 
     private final CommentRepository commentRepository;
-
     private final RoomRepository roomRepository;
     private final CommentMapper mapper;
 
