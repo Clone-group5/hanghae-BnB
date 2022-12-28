@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hanghae.hanghaebnb.common.jwt.JwtUtil;
 import com.hanghae.hanghaebnb.users.dto.KakaoUserInfoDto;
+import com.hanghae.hanghaebnb.users.dto.ResponseLoginUser;
 import com.hanghae.hanghaebnb.users.entity.Users;
 import com.hanghae.hanghaebnb.users.entity.UsersRoleEnum;
 import com.hanghae.hanghaebnb.users.mapper.UsersMapper;
@@ -40,7 +41,7 @@ public class KakaoService {
     @Value("${kakao.client.secret}")
     private String clientSecret;
 
-    public String kakaoLogin(String code, HttpServletResponse response) throws JsonProcessingException {
+    public ResponseLoginUser kakaoLogin(String code, HttpServletResponse response) throws JsonProcessingException {
         // 인가 코드로 엑세스 토큰 요청
         String accessToken = getToken(code);
 
@@ -53,7 +54,9 @@ public class KakaoService {
         // JWT 토큰 반환
         String createToken = jwtUtil.createToken(kakaoUser.getEmail(), kakaoUser.getUserRole());
 
-        return createToken;
+        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, createToken);
+
+        return new ResponseLoginUser(kakaoUser.getEmail(), kakaoUser.getNickname());
     }
 
     // 1. 인가 코드로 액세스 토큰 요청

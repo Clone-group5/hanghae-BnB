@@ -42,7 +42,7 @@ public class UserController {
 
     @PostMapping("/users/login/kakao")
     public ResponseEntity<ResponseDto> kakaoLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
-        kakaoService.kakaoLogin(code, response);
-        return new ResponseEntity<>(new ResponseDto<>(200, "로그인이 완료되었습니다.", null), HttpStatus.OK);
+        ResponseLoginUser responseLoginUser = kakaoService.kakaoLogin(code, response);
+        return new ResponseEntity<>(new ResponseDto<>(200, "로그인이 완료되었습니다.", responseLoginUser), HttpStatus.OK);
     }
 }
