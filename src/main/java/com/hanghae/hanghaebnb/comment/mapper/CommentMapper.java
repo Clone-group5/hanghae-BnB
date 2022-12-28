@@ -18,6 +18,7 @@ public class CommentMapper {
 
     public Comment toComment(Users users, RequestComment requestComment, Room room){
         return Comment.builder()
+                .users(users)
                 .writer(users.getNickname())
                 .contents(requestComment.getContents())
                 .createdAt(LocalDateTime.now())
