@@ -14,6 +14,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import static com.hanghae.hanghaebnb.common.exception.ErrorCode.NOT_FOUND_ROOM_EXCEPTION;
+import static com.hanghae.hanghaebnb.common.exception.ErrorCode.NOT_FOUND_COMMENT_EXCEPTION;
+import static com.hanghae.hanghaebnb.common.exception.ErrorCode.NOT_MATCH_USER_INFO;
+
 
 
 @RequiredArgsConstructor
@@ -31,8 +34,25 @@ public class CommentService {
         Room room = roomRepository.findById(roomid).orElseThrow(
                 () -> new CustomException(NOT_FOUND_ROOM_EXCEPTION)
         );
-        System.out.println(requestComment.getContents());
+
         Comment comment = mapper.toComment(users,requestComment, room);
+
+        commentRepository.save(comment);
+
+    }
+
+    public void updateComment(Long commentid, RequestComment requestComment, Users users) {
+
+
+        Comment comment = commentRepository.findById(commentid).orElseThrow(
+                () -> new CustomException(NOT_FOUND_COMMENT_EXCEPTION)
+        );
+
+        if(!comment.getUsers().getUserId().equals(users.getUserId())){
+            throw new CustomException(NOT_MATCH_USER_INFO);
+        }
+
+        comment.update(requestComment.getContents());
 
         commentRepository.save(comment);
 
