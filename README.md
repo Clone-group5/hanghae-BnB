@@ -68,7 +68,7 @@ yarn install
 [백엔드]
 + 김예진
 + 김형준
-+ 서영철
++ 서영철 [syckor](https://github.com/syckor)
 + 윤진국 [GGONG1956](https://github.com/GGONG1956)
 
 [프론트엔드]
