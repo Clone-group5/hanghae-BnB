@@ -69,7 +69,7 @@ yarn install
 + 김예진
 + 김형준
 + 서영철
-+ 윤진국 GGONG1956
++ 윤진국 [GGONG1956](https://github.com/GGONG1956)
 
 [프론트엔드]
 + 이철화 [JeongO41](https://github.com/Pablaw)
