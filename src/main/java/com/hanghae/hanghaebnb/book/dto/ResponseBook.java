@@ -3,6 +3,8 @@ package com.hanghae.hanghaebnb.book.dto;
 import com.hanghae.hanghaebnb.book.entity.Book;
 import lombok.Getter;
 
+import java.util.List;
+
 @Getter
 public class ResponseBook {
     private Long roomId;
@@ -19,8 +21,10 @@ public class ResponseBook {
 
     private Long totalPrice;
 
+    private List<String> photos;
 
-    public ResponseBook(Book book){
+
+    public ResponseBook(Book book, List<String> photos){
         this.roomId = book.getRoom().getRoomId();
         this.bookId = book.getBookId();
         this.title = book.getRoom().getTitle();
@@ -28,5 +32,6 @@ public class ResponseBook {
         this.checkOut = book.getCheckOut();
         this.headCount = book.getHeadCount();
         this.totalPrice = book.getTotalPrice();
+        this.photos = photos;
     }
 }
