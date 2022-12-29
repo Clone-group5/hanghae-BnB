@@ -82,6 +82,6 @@ public class UserService {
 
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(users.getEmail(), users.getUserRole()));
 
-        return new ResponseLoginUser(users.getEmail(), users.getNickname());
+        return new ResponseLoginUser(users.getEmail(), users.getNickname(), users.getUserRole());
     }
 }
