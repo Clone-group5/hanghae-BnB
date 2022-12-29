@@ -56,7 +56,7 @@ public class KakaoService {
 
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, createToken);
 
-        return new ResponseLoginUser(kakaoUser.getEmail(), kakaoUser.getNickname());
+        return new ResponseLoginUser(kakaoUser.getEmail(), kakaoUser.getNickname(), kakaoUser.getUserRole());
     }
 
     // 1. 인가 코드로 액세스 토큰 요청
