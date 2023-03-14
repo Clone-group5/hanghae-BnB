@@ -67,7 +67,6 @@ public class BookService {
             throw new IllegalArgumentException(BOOK_FAIL.getMsg());
         }
 
-
         Book book = bookMapper.toBook(room, requestBook, requestBook.getTotalPrice(), users);
         room.addBook(book);
         bookRepository.save(book);
