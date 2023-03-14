@@ -35,4 +35,16 @@ public class LettuceRockBookFacade {
 		}
 	}
 
+	public void deleteBook(Long key, Users usersReceive) throws InterruptedException{
+		while(!redisRepository.lock(key)){
+			Thread.sleep(100);
+		}
+
+		try{
+			bookService.deleteBook(key, usersReceive);
+		} finally {
+			redisRepository.unlock(key);
+		}
+	}
+
 }

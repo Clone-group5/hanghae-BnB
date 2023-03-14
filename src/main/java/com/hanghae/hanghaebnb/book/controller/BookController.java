@@ -2,6 +2,7 @@ package com.hanghae.hanghaebnb.book.controller;
 
 import com.hanghae.hanghaebnb.book.dto.RequestBook;
 import com.hanghae.hanghaebnb.book.dto.ResponseBookList;
+import com.hanghae.hanghaebnb.book.facade.LettuceRockBookFacade;
 import com.hanghae.hanghaebnb.book.service.BookService;
 import com.hanghae.hanghaebnb.common.dto.ResponseDto;
 import com.hanghae.hanghaebnb.common.security.UserDetailsImpl;
@@ -19,6 +20,8 @@ import java.text.ParseException;
 public class BookController {
     private final BookService bookService;
 
+    private final LettuceRockBookFacade lettuceRockBookFacade;
+
     /*
      * 예약 조회
      */
@@ -33,8 +36,10 @@ public class BookController {
      * 예약 등록
      */
     @PostMapping("/room/{roomId}/book")
-    public ResponseEntity<ResponseDto> addBook(@PathVariable Long roomId, @RequestBody RequestBook requestBook, @AuthenticationPrincipal UserDetailsImpl userDetails) throws ParseException {
-        bookService.addBook(roomId, requestBook, userDetails.getUsers());
+    public ResponseEntity<ResponseDto> addBook(@PathVariable Long roomId, @RequestBody RequestBook requestBook, @AuthenticationPrincipal UserDetailsImpl userDetails) throws
+        ParseException,
+        InterruptedException {
+        lettuceRockBookFacade.addBook(roomId, requestBook, userDetails.getUsers());
         ResponseDto responseDto = new ResponseDto(200, "예약이 완료되었습니다.", null);
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
@@ -43,8 +48,9 @@ public class BookController {
      * 예약 취소
      */
     @DeleteMapping("/book/{bookId}")
-    public ResponseEntity<ResponseDto> deleteBook(@PathVariable Long bookId, @AuthenticationPrincipal UserDetailsImpl userDetails){
-        bookService.deleteBook(bookId, userDetails.getUsers());
+    public ResponseEntity<ResponseDto> deleteBook(@PathVariable Long bookId, @AuthenticationPrincipal UserDetailsImpl userDetails) throws
+        InterruptedException {
+        lettuceRockBookFacade.deleteBook(bookId, userDetails.getUsers());
         ResponseDto responseDto = new ResponseDto(200, "숙소 예약 취소가 완료되었습니다.", null);
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
