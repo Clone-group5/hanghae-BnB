@@ -6,7 +6,7 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum ErrorCode {
-
+    BOOK_FAIL(400, "이미 예약중인 숙소입니다."),
     NOT_FOUND_USERS_EXCEPTION(404, "존재하지 않는 사용자입니다."),
     NOT_FOUND_ROOM_EXCEPTION(404, "존재하지 않는 숙소입니다."),
     INVALID_EMAIL(400, "이메일 형식이 맞지 않습니다."),

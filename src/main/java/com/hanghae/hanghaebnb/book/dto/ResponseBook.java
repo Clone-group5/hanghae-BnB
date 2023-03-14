@@ -1,7 +1,12 @@
 package com.hanghae.hanghaebnb.book.dto;
 
 import com.hanghae.hanghaebnb.book.entity.Book;
+
+import lombok.Data;
 import lombok.Getter;
+
+import java.time.LocalDate;
+import java.util.Date;
 
 import java.util.List;
 
@@ -13,9 +18,9 @@ public class ResponseBook {
 
     private String title;
 
-    private String checkIn;
+    private LocalDate checkIn;
 
-    private String checkOut;
+    private LocalDate checkOut;
 
     private Long headCount;
 

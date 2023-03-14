@@ -19,7 +19,7 @@ public class Tag {
     @Column(nullable = false)
     private Long roomId;
 
-    public Tag(Long roomId, String contents){
+    public Tag(Long roomId, String contents, long l){
         this.roomId = roomId;
         this.contents = contents;
     }

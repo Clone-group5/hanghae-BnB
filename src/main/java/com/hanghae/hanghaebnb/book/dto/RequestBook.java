@@ -1,5 +1,8 @@
 package com.hanghae.hanghaebnb.book.dto;
 
+import java.time.LocalDate;
+import java.util.Date;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -8,11 +11,20 @@ import lombok.NoArgsConstructor;
 public class RequestBook {
     private Long roomId;
 
-    private String checkIn;
+    private LocalDate checkIn;
 
-    private String checkOut;
+    private LocalDate checkOut;
 
     private Long headCount;
 
     private Long totalPrice;
+
+    public RequestBook(Long roomId, LocalDate checkIn, LocalDate checkOut, Long headCount, Long totalPrice){
+        this.roomId = roomId;
+        this.checkIn = checkIn;
+        this.checkOut = checkOut;
+        this.headCount = headCount;
+        this.totalPrice = totalPrice;
+    }
+
 }

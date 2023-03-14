@@ -18,7 +18,7 @@ import javax.transaction.Transactional;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 import static com.hanghae.hanghaebnb.common.exception.ErrorCode.*;
@@ -39,7 +39,7 @@ public class BookService {
     public ResponseBookList showBook(Users usersReceive) {
         Users users = userRepository.findById(usersReceive.getUserId()).orElseThrow(
                 () -> new IllegalArgumentException(NOT_FOUND_USERS_EXCEPTION.getMsg())
-        );/* 임시로 넣어둔 것 시큐리티 구현 후 수정 */
+        );
 
         ResponseBookList responseBookList = new ResponseBookList();
         List<Book> books = bookRepository.findAllByUsers(users);
@@ -60,36 +60,18 @@ public class BookService {
                 () -> new IllegalArgumentException(NOT_FOUND_ROOM_EXCEPTION.getMsg())
         );
 
-//        Long total = room.getPrice();
-//
-//        if(requestBook.getHeadCount() > room.getHeadDefault()){
-//            Long count = requestBook.getHeadCount() - room.getHeadDefault();
-//            total += (room.getExtraPrice() * count);
-//        }
-//
-//        String checkIn = requestBook.getCheckIn();
-//        String checkOut = requestBook.getCheckOut();
-//
-//        checkIn = checkIn.replace("-", "/");
-//        checkOut = checkOut.replace("-", "/");
-//
-//        Date formatCheckIn = new SimpleDateFormat("yyyy/MM/dd").parse(checkIn);
-//        Date formatCheckOut = new SimpleDateFormat("yyyy/MM/dd").parse(checkOut);
-//
-//        long diffSec = (formatCheckOut.getTime() - formatCheckIn.getTime()) / 1000;
-//        long diffDays = diffSec / (24*60*60);
-//
-//        if(diffDays > 1){
-//            total += (room.getExtraPrice() * (diffDays-1));
-//        }
-//
-//        if(!total.equals(requestBook.getTotalPrice())){
-//            throw new IllegalArgumentException(NOT_MATCH_TOTAL_PRICE_EXCEPTION.getMsg());
-//        }
+        Long duplicationCheckIn = bookRepository.findByCheckIn(requestBook.getCheckIn(), requestBook.getCheckOut());
+        Long duplicationCheckOut = bookRepository.findByCheckOut(requestBook.getCheckIn(), requestBook.getCheckOut());
+
+        if(duplicationCheckIn == roomId || duplicationCheckOut == roomId){
+            throw new IllegalArgumentException(BOOK_FAIL.getMsg());
+        }
+
 
         Book book = bookMapper.toBook(room, requestBook, requestBook.getTotalPrice(), users);
         room.addBook(book);
         bookRepository.save(book);
+
     }
 
     @Transactional

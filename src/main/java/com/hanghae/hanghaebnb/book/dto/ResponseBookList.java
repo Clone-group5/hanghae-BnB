@@ -8,7 +8,7 @@ import java.util.List;
 @Getter
 public class ResponseBookList {
 
-    private final List<ResponseBook> responseBookList = new ArrayList<>();
+    private List<ResponseBook> responseBookList = new ArrayList<>();
 
     public void addBook(ResponseBook responseBook){
         responseBookList.add(responseBook);
