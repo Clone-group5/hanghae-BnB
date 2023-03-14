@@ -1,5 +1,8 @@
 package com.hanghae.hanghaebnb.book.entity;
 
+import java.time.LocalDate;
+import java.util.Date;
+
 import com.hanghae.hanghaebnb.room.entity.Room;
 import com.hanghae.hanghaebnb.users.entity.Users;
 import lombok.AllArgsConstructor;
@@ -27,10 +30,10 @@ public class Book {
     private Long totalPrice;
 
     @Column(nullable = false)
-    private String checkIn;
+    private LocalDate checkIn;
 
     @Column(nullable = false)
-    private String checkOut;
+    private LocalDate checkOut;
 
     @ManyToOne
     @JoinColumn(name = "ROOM_ID")

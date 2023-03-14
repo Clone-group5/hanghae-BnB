@@ -5,9 +5,6 @@ import com.amazonaws.services.s3.AmazonS3Client;
 
 
 import com.amazonaws.services.s3.model.*;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hanghae.hanghaebnb.comment.dto.ResponseComment;
 import com.hanghae.hanghaebnb.comment.entity.Comment;
 import com.hanghae.hanghaebnb.comment.mapper.CommentMapper;
@@ -17,9 +14,7 @@ import com.hanghae.hanghaebnb.common.exception.ErrorCode;
 import com.hanghae.hanghaebnb.likeRoom.entity.LikeRoom;
 import com.hanghae.hanghaebnb.likeRoom.repository.LikeRoomRepository;
 import com.hanghae.hanghaebnb.room.Mapper.RoomMapper;
-import com.hanghae.hanghaebnb.room.Mapper.TagMapper;
 import com.hanghae.hanghaebnb.room.dto.RoomListResponseDto;
-import com.hanghae.hanghaebnb.room.dto.RoomRequestDto;
 import com.hanghae.hanghaebnb.room.dto.RoomResponseDto;
 import com.hanghae.hanghaebnb.room.entity.Room;
 import com.hanghae.hanghaebnb.room.entity.Tag;
@@ -30,17 +25,15 @@ import com.hanghae.hanghaebnb.users.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -80,7 +73,7 @@ public class RoomService {
         room.imgUpdate(folderPath);
 
         for(String tag : tags){
-            tagRepository.save(new Tag(room.getRoomId(), tag));
+            tagRepository.save(new Tag(room.getRoomId(), tag, 1L));
         }
 
 
