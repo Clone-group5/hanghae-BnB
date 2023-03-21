@@ -23,7 +23,7 @@ import com.hanghae.hanghaebnb.users.mapper.UsersMapper;
 import com.hanghae.hanghaebnb.users.repository.UserRepository;
 
 @SpringBootTest
-@DisplayName("Redisson Lock 테스트")
+@DisplayName("Lettuce Lock 테스트")
 public class BookServiceTest {
 
 	@Autowired
